@@ -1,0 +1,5 @@
+
+1.依赖：
+Spring：spring-webmvc、spring-tx、spring-jdbc、spring-context-support、
+切面：aspectjweaver（org.aspectj）、aspectjrt（org.aspectj）、
+字节动态代理：cglib

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"       
+    xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:context="http://www.springframework.org/schema/context"   
+    xmlns:tx="http://www.springframework.org/schema/tx"  
+    xmlns:aop="http://www.springframework.org/schema/aop"  
+    xsi:schemaLocation="  
+            http://www.springframework.org/schema/beans    
+            classpath:org/springframework/beans/factory/xml/spring-beans-3.2.xsd    
+            http://www.springframework.org/schema/aop    
+            classpath:org/springframework/aop/config/spring-aop-3.2.xsd    
+            http://www.springframework.org/schema/tx    
+            classpath:org/springframework/transaction/config/spring-tx-3.2.xsd    
+            http://www.springframework.org/schema/context    
+            classpath:org/springframework/context/config/spring-context-3.2.xsd"
+    > 
+          
+    <!-- 设置需要进行Spring注解扫描的类包 -->
+    <context:component-scan base-package="com.*" />
+
+    <!-- 引入属性文件-->
+	<context:property-placeholder location="classpath:config.properties" />
+	
+	<!-- Master Data Source -->
+    <bean id="masterDataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource">  
+		<property name="driver" value="${jdbc.driver}" />
+		<property name="driverUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="alias" value="Pool_Pubds_Master" />
+	    <!-- <property name="houseKeepingSleepTime" value="90000" /> -->
+	    <!-- 最少保持的空闲连接数 （默认2个） -->
+	    <property name="prototypeCount" value="3" />
+	    <property name="maximumConnectionCount" value="80" />
+	    <property name="minimumConnectionCount" value="3" />
+	    <!-- 同时最大连接数 -->
+	    <property name="simultaneousBuildThrottle" value="20" />
+	    <!-- <property name="maximumConnectionLifetime" value="14400000" /> -->
+	    <property name="houseKeepingTestSql" value="select CURRENT_DATE" />
+	</bean> 
+	
+	<!-- Slave Data Source -->
+    <bean id="slaveDataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource" abstract="true">  
+		<property name="driver" value="${jdbc.driver}" />
+		<!-- <property name="driverUrl" value="${jdbc.url.slave1}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="alias" value="Pool_Pubds_Slave" /> -->
+	    <!-- <property name="houseKeepingSleepTime" value="90000" /> -->
+	    <!-- 最少保持的空闲连接数 （默认2个） -->
+	    <property name="prototypeCount" value="3" />
+	    <property name="maximumConnectionCount" value="80" />
+	    <property name="minimumConnectionCount" value="3" />
+	    <!-- 同时最大连接数 -->
+	    <property name="simultaneousBuildThrottle" value="20" />
+	    <!-- <property name="maximumConnectionLifetime" value="14400000" /> -->
+	    <property name="houseKeepingTestSql" value="select CURRENT_DATE" />
+	</bean>
+	<bean id="slaveDataSource1" parent="slaveDataSource">
+		<property name="driverUrl" value="${jdbc.url.slave1}" />
+		<property name="user" value="${jdbc.username.slave1}" />
+		<property name="password" value="${jdbc.password.slave1}" />
+		<property name="alias" value="Pool_Pubds_Slave1" />
+	</bean>
+	<bean id="slaveDataSource2" parent="slaveDataSource">
+		<property name="driverUrl" value="${jdbc.url.slave2}" />
+		<property name="user" value="${jdbc.username.slave2}" />
+		<property name="password" value="${jdbc.password.slave2}" />
+		<property name="alias" value="Pool_Pubds_Slave2" />
+	</bean>
+	
+	<bean id="readWriteDataSource" class="com.cnit.pubds.infrastructure.repository.mybatis.datasource.ReadWriteDataSource">
+        <property name="writeDataSource" ref="masterDataSource"/>
+        <property name="readDataSourceMap">
+           <map>
+              <entry key="slaveDataSource1" value-ref="slaveDataSource1"/>
+              <entry key="slaveDataSource2" value-ref="slaveDataSource2"/>
+           </map>
+        </property>
+    </bean>
+    
+    <bean id="readWriteDataSourceTransactionProcessor" class="com.cnit.pubds.infrastructure.repository.mybatis.datasource.ReadWriteDataSourceProcessor">
+       <property name="forceChoiceReadWhenWrite" value="false"/>
+    </bean>
+
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="readWriteDataSource" />
+	</bean>
+	
+	<!-- 启用 annotation事务--> 
+    <tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager"/>
+           
+	<!-- Spring Advice -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">  
+        <tx:attributes>  
+            <tx:method name="get*" propagation="SUPPORTS" read-only="true" />
+            <tx:method name="query*" propagation="SUPPORTS" read-only="true"/>
+            <tx:method name="find*" propagation="SUPPORTS" read-only="true"/>
+            <tx:method name="*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+        </tx:attributes>   
+    </tx:advice>
+     <!-- Spring Aop Config -->  
+    <aop:config>  
+        <aop:pointcut id="pointcut" expression="execution(* com.cnit.pubds..*Impl.*(..))" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut" />
+        
+        <!-- 通过AOP切面实现读/写库选择 -->  
+	    <aop:aspect order="-2147483648" ref="readWriteDataSourceTransactionProcessor">  
+	       <aop:around pointcut-ref="pointcut" method="determineReadOrWriteDB"/>  
+	    </aop:aspect> 
+    </aop:config>
+	
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">  
+	   <property name="basenames">  
+	         <list>  
+	         	 <value>i18n/message</value>
+	         </list>  
+	   </property>
+	   <property name="defaultEncoding" value="UTF-8"/>
+	   <property name="useCodeAsDefaultMessage" value="true" />
+	</bean>
+    
+</beans>

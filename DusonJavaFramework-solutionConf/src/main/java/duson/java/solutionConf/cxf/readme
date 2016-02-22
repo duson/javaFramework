@@ -1,0 +1,21 @@
+
+1.Maven引用包名：
+（1）cxf-bundle
+为了不与高版本的Spring冲突，需要排除一些依赖
+<dependency>
+	<groupId>org.apache.cxf</groupId>
+	<artifactId>cxf-bundle</artifactId>
+	<version>2.7.6</version>
+	<exclusions>
+		<exclusion>
+			<artifactId>spring-asm</artifactId>
+			<groupId>org.springframework</groupId>
+		</exclusion>
+		<exclusion>
+			<artifactId>spring-aop</artifactId>
+			<groupId>org.springframework</groupId>
+		</exclusion>
+	</exclusions>
+</dependency>
+
+（2）jackson-mapper-lgpl 用于jaxrs:providers

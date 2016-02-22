@@ -1,0 +1,10 @@
+1.依赖：shiro-spring、shiro-cas、shiro-ehcache（如配置了缓存）
+
+2.页面标签权限判断
+<c:set value='权限值' var="priv_add"/>
+
+<shiro:hasPermission name="${priv_add}">
+	...
+</shiro:hasPermission>
+
+登录名：<shiro:principal/>

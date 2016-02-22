@@ -16,5 +16,9 @@
 
   <modules>
     <module>DusonJavaFramework-core</module>
+    <module>DusonJavaFramework-ui</module>
+    <module>DusonJavaFramework-utils</module>
+    <module>DusonJavaFramework-solutionConf</module>
+    <module>DusonJavaFramework-persistence</module>
   </modules>
 </project>

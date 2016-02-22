@@ -1,0 +1,44 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans classpath:org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+		http://cxf.apache.org/jaxws classpath:schemas/jaxws.xsd
+		http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+    
+   <jaxws:endpoint id="demo" implementor="实现类" address="/demo" />
+   <!-- 另一种配置方式 -->  
+    <!-- <bean id="helloServicesBean" class="实现类" />  
+    <jaxws:server id="helloServices" address="demo"   
+            serviceClass="接口">  
+            <jaxws:serviceBean>  
+                <ref bean="helloServicesBean"/>  
+            </jaxws:serviceBean>  
+    </jaxws:server> -->
+
+		
+	<!-- 服务 -->
+	<bean id="sampleAPIImpl" class="duson.java.solutionConf.cxf.sample.SampleAPIImpl"/>
+	<jaxrs:server id="sampleAPI" address="/sample">  
+	   <jaxrs:serviceBeans>  
+	       <ref bean="sampleAPIImpl"/>  
+	   </jaxrs:serviceBeans>
+	   <jaxrs:providers>
+	       <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+	       <bean class="duson.java.solutionConf.cxf.interceptors.ExceptionHandler"/>
+	   </jaxrs:providers>
+	   <jaxrs:extensionMappings>
+	       <entry key="json" value="application/json"/>
+	       <entry key="xml" value="application/xml"/>
+	   </jaxrs:extensionMappings>
+	   <jaxrs:inInterceptors>
+	       <bean class="duson.java.solutionConf.cxf.interceptors.IpAddressInInterceptor"></bean>
+	   </jaxrs:inInterceptors>
+	 </jaxrs:server>
+	
+</beans>  
