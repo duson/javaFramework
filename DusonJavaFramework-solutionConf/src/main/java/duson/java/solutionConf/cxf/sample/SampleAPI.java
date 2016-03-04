@@ -9,6 +9,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import duson.java.solutionConf.cxf.dto.WSResult;
+
 @Path("/")
 @WebService
 @SOAPBinding(style=Style.DOCUMENT)

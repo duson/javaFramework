@@ -8,8 +8,6 @@ import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 
-import com.cnit.pubds.domain.common.Config;
-
 
 /**
  * 
@@ -17,10 +15,13 @@ import com.cnit.pubds.domain.common.Config;
  *
  */
 public class IpAddressInInterceptor extends AbstractPhaseInterceptor<Message> {
-
+	private static final String REST_DENIED_LIST = "";
+	private static final String REST_ALLOWED_LIST = "";
+	
 	public IpAddressInInterceptor() {
 		super(Phase.RECEIVE);
 	}
+	
 	/**
 	 * @param phase
 	 */
@@ -37,8 +38,8 @@ public class IpAddressInInterceptor extends AbstractPhaseInterceptor<Message> {
 		String ipAddress = request.getRemoteAddr(); // 客户端IP地址
 		
 		// 允许和拒绝的IP地址
-		String[] deniedList = Config.REST_DENIED_LIST.split(",");
-		String[] allowedList = Config.REST_ALLOWED_LIST.split(",");
+		String[] deniedList = REST_DENIED_LIST.split(",");
+		String[] allowedList = REST_ALLOWED_LIST.split(",");
 		
 		// 拒绝访问的地址
 		if (deniedList != null && deniedList.length > 0) {

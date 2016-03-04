@@ -13,12 +13,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.cnit.pubds.domain.common.Config;
-import com.cnit.pubds.domain.common.Constant;
-import com.cnit.pubds.infrastructure.util.InitPropertiesUtil;
-import com.cnit.pubds.infrastructure.util.web.CookieHelper;
+import org.apache.commons.lang3.StringUtils;
 
 public class AjaxSessionTimeoutFilter implements Filter {
 
@@ -56,26 +51,12 @@ public class AjaxSessionTimeoutFilter implements Filter {
 		
 		Object casUrlObject = req.getSession().getAttribute("casUrl");
 		if (null == casUrlObject) {
-			req.getSession().setAttribute("casUrl", InitPropertiesUtil.get("cas.server"));
-		}
-		
-		// 国际化
-		if(req.getParameter(Constant.COOKIES_KEY_LANG) != null){
-			String lang = req.getParameter(Constant.COOKIES_KEY_LANG).toString();
-			CookieHelper.addCookie(res, Config.COOKIESKEY_LANGUAGE, lang, -1);
-		}
-		
-		// 是否为公众云平台的代号
-		if(req.getParameter(Constant.COOKIES_KEY_ACCOUNT_TYPE) != null){
-			String type = req.getParameter(Constant.COOKIES_KEY_ACCOUNT_TYPE).toString();
-			CookieHelper.addCookie(res, Constant.COOKIES_KEY_ACCOUNT_TYPE, type, -1);
-			res.sendRedirect(req.getContextPath() + req.getServletPath());
-			return;
+			req.getSession().setAttribute("casUrl", "cas的Url");
 		}
 		
 		// 判断session里是否有用户信息
 		//if(!SecurityUtils.getSubject().isAuthenticated()) {
-		if (req.getSession().getAttribute(Constant.SESSION_KEY_CURRENT_USERID) == null) {
+		if (req.getSession().getAttribute("") == null) {
 			// 如果是ajax请求响应头会有，x-requested-with；
 			//如果是安全地址不进行处理　
 			if (req.getHeader("x-requested-with") != null

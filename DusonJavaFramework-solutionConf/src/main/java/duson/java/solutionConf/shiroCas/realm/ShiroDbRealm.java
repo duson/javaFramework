@@ -1,5 +1,8 @@
 package duson.java.solutionConf.shiroCas.realm;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.apache.shiro.SecurityUtils;
@@ -13,20 +16,17 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
-import com.cnit.pubds.domain.common.Account;
-
 public class ShiroDbRealm extends AuthorizingRealm {
-
-	@Resource
-	//private IAccountRepository accountRepository;
 	
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		Account user = (Account) principals.fromRealm(getName()).iterator().next();
+		Object user = principals.fromRealm(getName()).iterator().next();
 		
         if (user != null) {  
-            SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();  
-            //info.addStringPermissions(user.getUserPermissions(user.getUserName()));  
+            SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+             // 根据用户名从数据库中查询权限（如：user:create）
+            List<String> permissions = new ArrayList<String>();
+            info.addStringPermissions(permissions);  
             return info;  
         } else {  
             return null;  
@@ -38,7 +38,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 			AuthenticationToken authcToken) throws AuthenticationException {
 		UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) authcToken;
 		
-		Account user = new Account();// accountRepository.getUserByName(usernamePasswordToken.getUsername());  
+		Object user = null; // 根据用户名(usernamePasswordToken.getUsername())从数据库中查询用户信息  
         if (user != null) {  
             SecurityUtils.getSubject().getSession().setAttribute("loginUserInfo", user);  
             return new SimpleAuthenticationInfo(user, "", getName());  

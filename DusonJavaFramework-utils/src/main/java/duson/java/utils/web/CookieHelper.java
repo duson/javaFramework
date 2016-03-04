@@ -1,5 +1,7 @@
 package duson.java.utils.web;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 依赖：servlet-api
- * @author protruly-cpm
  *
  */
 public class CookieHelper {
@@ -19,9 +20,9 @@ public class CookieHelper {
 	    cookie.setMaxAge(maxAge);
 	    response.addCookie(cookie);
 	}
-	public static String getCookieValue(HttpServletRequest request, String name){
+	public static String getCookieValue(HttpServletRequest request, String name) throws UnsupportedEncodingException{
 		Cookie cookie = getCookieByName(request, name);
-		if(cookie != null) return cookie.getValue();
+		if(cookie != null) return URLDecoder.decode(cookie.getValue(), "utf-8");
 		
 		return null;
 	}

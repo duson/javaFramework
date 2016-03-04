@@ -28,7 +28,8 @@ import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.web.util.WebUtils;
 
 
-/**
+/** 
+ 	// 获取用户信息
     Subject subject = SecurityUtils.getSubject();
 	if(subject.getPrincipals() != null){
 		List<Object> listPrincipals = subject.getPrincipals().asList();
@@ -36,10 +37,13 @@ import org.apache.shiro.web.util.WebUtils;
 			account = (Account) listPrincipals.get(2);
 	}
 	
+	// 得到Session
 	Session session = SecurityUtils.getSubject().getSession();
  *
  */
 public class CustomCasRealm extends CasRealm {
+	private static final String SESSION_USER_ID = "";
+	private static final String SESSION_PRIVILEGE = "";
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -61,23 +65,14 @@ public class CustomCasRealm extends CasRealm {
     	long userId = Long.parseLong(userIdString);
     	
     	try {
-	    	Account	account = commonMapper.getAccountDetailsByID(userId);
+	    	Object account = null; // 根据用户ID（userId）通过Rpc或数据库得到用户信息
 	        if(account == null)
 	        	throw new CasAuthenticationException("user invalid");
 	        
-	        //SecurityUtils.getSubject().getSession().setAttribute(Constant.SESSION_KEY_ACCOUNT, account);
-	        //return info;
-	        
 	        Session session = SecurityUtils.getSubject().getSession();
-	        session.setAttribute(Constant.SESSION_KEY_CURRENT_USERID, userId);
-	        session.setAttribute(Constant.SESSION_KEY_CURRENT_COMPANYID, account.getCompanyID());
+	        session.setAttribute(SESSION_USER_ID, userId);
 	        
-	        Company company = commonMapper.getCompany(account.getCompanyID());
-	        if(company != null) {
-		        session.setAttribute(Constant.SESSION_KEY_CURRENT_COMPANYNAME, company.getCompanyName());
-	        }
-	        
-	        List<Object> list = CollectionUtils.asList(account.getUserName(), principals.get(1));
+	        List<Object> list = CollectionUtils.asList("用户名", principals.get(1));
 	        list.add(account);
 	        
 	        PrincipalCollection principalCollection = new SimplePrincipalCollection(list, getName());
@@ -134,9 +129,8 @@ public class CustomCasRealm extends CasRealm {
 			PrincipalCollection principals) {
 		List<String> permissions = new ArrayList<String>();
 		Session session = SecurityUtils.getSubject().getSession();
-		//session.removeAttribute(Constant.SESSION_KEY_PRIVILEGE);
 		
-		// 如果跳转至其它子系统，重新读取权限信息
+		// 如果从其它子系统跳转过来的，需要重新读取权限信息
 		HttpServletRequest request = WebUtils.getHttpRequest(SecurityUtils.getSubject());
 		String hostName = request.getServerName();
 		if(request.getServerPort() != 80)
@@ -150,14 +144,13 @@ public class CustomCasRealm extends CasRealm {
 				refererHostName = refererHostName.substring(0, refererHostName.indexOf("/"));
 		}
 		if(referer != null && !hostName.toLowerCase().equals(refererHostName.toLowerCase()))
-			session.removeAttribute(Constant.SESSION_KEY_PRIVILEGE);
+			session.removeAttribute(SESSION_PRIVILEGE);
 		
-		Object objPermissioin = session.getAttribute(Constant.SESSION_KEY_PRIVILEGE);
+		Object objPermissioin = session.getAttribute(SESSION_PRIVILEGE);
 		if(objPermissioin == null){
 			List<Object> principalList = principals.asList();
 			Map attributes = (Map) principalList.get(1);
-			Account account = (Account) principalList.get(2);
-			long companyID = account.getCompanyID();
+			Object account = principalList.get(2);
 			
 			// 由于CAS不支持实时更新权限，暂时使用数据查询权限的方式
 			/*if(attributes.containsKey("PrivIdS") && attributes.get("PrivIdS") != null && !attributes.get("PrivIdS").toString().isEmpty()){
@@ -197,7 +190,7 @@ public class CustomCasRealm extends CasRealm {
 		 		}
 			}else{*/
 				// 从数据获取功能和操作
-				List<Privilege> privs = commonMapper.getPrivileges(Constant.SYSTEM_ID, account.getUserID());
+				List<Privilege> privs = null;
 				// 转化为Shiro功能集合
 				long privID, mask;
 				for(Privilege pri : privs){
@@ -205,8 +198,8 @@ public class CustomCasRealm extends CasRealm {
 					mask = pri.getOperaMask();
 					int i = 0;
 					
-					// 默认给予查看权限
-					permissions.add(buildPermission(String.valueOf(privID), String.valueOf(Constant.OPERA_VIEW)));
+					// 默认给予查看权限 0
+					permissions.add(buildPermission(String.valueOf(privID), "0"));
 					
 					do{
 						if((mask & 1) > 0){
@@ -217,8 +210,7 @@ public class CustomCasRealm extends CasRealm {
 				}
 			//}
 			
-			session.setAttribute(Constant.SESSION_KEY_PRIVILEGE, permissions);			
-			//logger.error("权限："+permissions.toString());
+			session.setAttribute(SESSION_PRIVILEGE, permissions);
 		}else{
 			permissions = (List<String>)objPermissioin;
 		}
@@ -233,4 +225,21 @@ public class CustomCasRealm extends CasRealm {
 		return String.format("%1$s:%2$s", priv, opera);
 	}
 	
+	public class Privilege {
+		private long privID;
+		private long operaMask;
+		
+		public long getPrivID() {
+			return privID;
+		}
+		public void setPrivID(long privID) {
+			this.privID = privID;
+		}
+		public long getOperaMask() {
+			return operaMask;
+		}
+		public void setOperaMask(long operaMask) {
+			this.operaMask = operaMask;
+		}
+	}
 }

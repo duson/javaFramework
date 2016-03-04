@@ -1,9 +1,10 @@
 package duson.java.utils.collection;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 /**
  * 依赖：commons-collections

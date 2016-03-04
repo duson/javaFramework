@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
-import com.cnit.pubds.domain.common.exception.BusinessException;
+import duson.java.core.exception.BusinessException;
 
 public class CustomSimpleMappingExceptionResolver extends SimpleMappingExceptionResolver {
 	private static final Logger logger = LoggerFactory.getLogger(CustomSimpleMappingExceptionResolver.class);

@@ -14,12 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.ModelAndViewDefiningException;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import com.cnit.pubds.domain.common.Constant;
 
 /**
  * 防CSRF攻击，请求需提供令牌
@@ -27,6 +24,7 @@ import com.cnit.pubds.domain.common.Constant;
  *
  */
 public class SecureTokenInterceptor extends HandlerInterceptorAdapter {
+	private static final String TOKEN_PARAMETER_NAME = "";
 
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
@@ -47,14 +45,14 @@ public class SecureTokenInterceptor extends HandlerInterceptorAdapter {
      * @throws ModelAndViewDefiningException
      */
     private boolean checkValidToken(HttpServletRequest req, HttpServletResponse resp) throws IOException, ModelAndViewDefiningException {
-        String tokenValue = req.getHeader(Constant.TOKEN_PARAMETER_NAME);
+        String tokenValue = req.getHeader(TOKEN_PARAMETER_NAME);
 
         HttpSession session = req.getSession();
         
         if (tokenValue == null || tokenValue.isEmpty()) {
             resp.sendError(400);
             return false;
-        } else if (!tokenValue.equals(session.getValue(Constant.TOKEN_PARAMETER_NAME))) {
+        } else if (!tokenValue.equals(session.getValue(TOKEN_PARAMETER_NAME))) {
             ModelAndView mav = new ModelAndView("redirect:/error/unauthorized");
             throw new ModelAndViewDefiningException(mav);
         }
@@ -68,10 +66,10 @@ public class SecureTokenInterceptor extends HandlerInterceptorAdapter {
     	
     	HttpSession session = req.getSession();
         
-        if(session.getValue(Constant.TOKEN_PARAMETER_NAME) == null) {
+        if(session.getValue(TOKEN_PARAMETER_NAME) == null) {
 	        String tokenValue = new Date().toString();
-	        session.putValue(Constant.TOKEN_PARAMETER_NAME, tokenValue); 
-	        modelAndView.addObject(Constant.TOKEN_PARAMETER_NAME, tokenValue);
+	        session.putValue(TOKEN_PARAMETER_NAME, tokenValue); 
+	        modelAndView.addObject(TOKEN_PARAMETER_NAME, tokenValue);
         }
     }
 }

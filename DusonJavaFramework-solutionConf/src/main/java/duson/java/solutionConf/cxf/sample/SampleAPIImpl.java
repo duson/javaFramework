@@ -1,15 +1,14 @@
 package duson.java.solutionConf.cxf.sample;
 
-import java.util.Map;
-
-import javax.annotation.Resource;
 import javax.jws.WebService;
 
 import org.springframework.stereotype.Service;
 
+import duson.java.solutionConf.cxf.dto.WSResult;
+
 
 @Service
-@WebService(endpointInterface = "com.cnit.pubds.webservice.material.MaterialAPI")
+@WebService(endpointInterface = "接口全类名")
 public class SampleAPIImpl implements SampleAPI {
 	
 	@Override

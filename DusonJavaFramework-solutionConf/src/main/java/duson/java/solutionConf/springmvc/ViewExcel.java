@@ -2,22 +2,17 @@ package duson.java.solutionConf.springmvc;
 
 import java.io.OutputStream;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.springframework.context.MessageSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.view.document.AbstractExcelView;
 
@@ -28,15 +23,16 @@ import org.springframework.web.servlet.view.document.AbstractExcelView;
  return new ModelAndView(new ViewExcel(), model); 
  *
  */
+@SuppressWarnings("deprecation")
 public class ViewExcel extends AbstractExcelView {
 	
 	@Override
 	protected void buildExcelDocument(Map<String, Object> model, HSSFWorkbook workbook, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		
-		PageList<DeviceWorktimeLogsDTO> list = new PageList<DeviceWorktimeLogsDTO>();
+		List<Object> list = new ArrayList<Object>();
 		if(model.containsKey("list"))
-			list = (PageList<DeviceWorktimeLogsDTO>) model.get("list");
+			list = (List<Object>) model.get("list");
 		
 		HSSFSheet sheet = workbook.createSheet("Sheet");  
         sheet.setDefaultColumnWidth((short) 12);  
@@ -50,7 +46,7 @@ public class ViewExcel extends AbstractExcelView {
         HSSFRow sheetRow;
         int rowIndex = 1;
         //sheetRow = sheet.createRow(list.size());
-        for () {
+        for (Object obj : list) {
         	sheetRow = sheet.createRow(rowIndex++);
         	
             sheetRow.createCell(0).setCellValue("");

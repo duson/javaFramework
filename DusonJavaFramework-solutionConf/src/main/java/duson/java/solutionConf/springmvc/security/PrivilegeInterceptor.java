@@ -1,67 +1,46 @@
 package duson.java.solutionConf.springmvc.security;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.cnit.pubds.domain.common.Account;
-import com.cnit.pubds.domain.common.Config;
-import com.cnit.pubds.domain.common.Constant;
-import com.cnit.pubds.domain.common.annotation.Privilege;
-import com.cnit.pubds.web.vo.JsonResult;
-
 public class PrivilegeInterceptor extends HandlerInterceptorAdapter {
-	private Account getAccount(){
-		Account account = null;
-		
-		Subject subject = SecurityUtils.getSubject();
-		if(subject.getPrincipals() != null){
-			List<Object> listPrincipals = subject.getPrincipals().asList();
-			if(listPrincipals.size() > 2)
-				account = (Account) listPrincipals.get(2);
-		}
-		
-		return account;
-	}
 
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 		if(!(handler instanceof HandlerMethod)) return true;
 		HandlerMethod handler2 = (HandlerMethod) handler;
+		
 		Privilege priv = handler2.getMethodAnnotation(Privilege.class);
 
 		// 没有声明权限,放行
 		if (null == priv) return true;
 
 		// 判断是否登录了系统
-		Account account = getAccount();
+		Object account = null;
 		if (null == account) {
-			handler(request, response, Config.CAS_LOGIN_URL, "未登录");
+			handler(request, response, "登录Url", "未登录");
 			return false;
 		}else{
 			boolean hasRight = false;
-			Map<Integer, Map<Integer, Integer>> privilege = account.getPrivilege();
-			if(privilege.containsKey(Constant.SYSTEM_ID)){
-				Map<Integer, Integer> sysPrivs = privilege.get(Constant.SYSTEM_ID);
-				if(sysPrivs.containsKey(priv.priv().getIntValue())){
-					Integer opMask = sysPrivs.get(priv.priv().getIntValue());
-					hasRight = (opMask & priv.operaion().getIntValue()) > 0;
-				}
+			Map<Integer, Integer> privilege = null; // 从其它地方获取用户权限
+			if(privilege.containsKey(priv.priv())){
+				Integer opMask = privilege.get(priv.priv());
+				hasRight = (opMask & priv.operaion()) > 0;
 			}
 			
 			if(!hasRight){
@@ -98,12 +77,19 @@ public class PrivilegeInterceptor extends HandlerInterceptorAdapter {
                 .getHeader("X-Requested-With").indexOf("XMLHttpRequest") > -1))) {
         	request.getRequestDispatcher(url).forward(request, response);
         }else{
-            PrintWriter writer = response.getWriter();  
-			JsonResult jsonResult = new JsonResult();
-			jsonResult.setMsg(msg);
-            writer.println(jsonResult);  
+            PrintWriter writer = response.getWriter();
+            writer.println(msg); // 最好输出Json格式的字符串
             writer.flush();  
         }
 	}
 	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	@Documented
+	public @interface Privilege {
+		int type() default 0;
+		int priv();
+		int operaion() default 0;
+	}
+
 }
