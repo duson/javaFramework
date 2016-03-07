@@ -12,10 +12,10 @@ public class BytesWapper {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < buf.length; i++) {
 			String hex = Integer.toHexString(buf[i] & 0xFF);
-			if (hex.length() == 1) {
-				hex = '0' + hex;
-			}
-			sb.append(hex.toUpperCase());
+			if (hex.length() < 2) {  
+				sb.append(0);  
+	        }  
+			sb.append(hex);
 		}
 		return sb.toString();
 	}
@@ -53,4 +53,58 @@ public class BytesWapper {
 		return hexDigits[d1] + hexDigits[d2];
 	}
 
+	public static byte[] long2Byte(long longValue){
+		byte[] b = new byte[8];
+		for(int i = 0; i < 8; i++){
+			b[i] = (byte) (longValue >> 8 * (7 - i) & 0xFF);
+		}
+		return b;
+	}
+	
+	public static long byte2Long(byte[] b){
+		long longValue = 0;
+		int nLen = (b.length > 8 ? 8 : b.length);
+		for(int i = 0; i < nLen; i++){
+			longValue += (b[i] & 0xFF) << (8 * (nLen - 1 - i));
+		}
+		return longValue;
+	}
+	
+	public static byte[] int2Byte(int intValue){
+		byte[] b= new byte[4];
+		for(int i = 0; i < 4; i++){
+			b[i] = (byte) (intValue >> 8 * (3 - i) & 0xFF);
+		}
+		return b;
+	}
+	
+	public static int byte2Int(byte[] b) {
+		int intValue = 0;
+		int nLen = (b.length > 4) ? 4 : b.length;
+
+		for (int i = 0; i < nLen; i++) {
+			intValue += (b[i] & 0xFF) << (8 * (3 - i));
+		}
+
+		return intValue;
+	}
+
+	public static byte[] char2Byte(char chValue) {
+		byte[] b = new byte[2];
+
+		b[0] = (byte) ((char) (chValue >> 8) & 0xFF);
+		b[1] = (byte) (chValue & 0xFF);
+
+		return b;
+	}
+
+	public static char byte2Char(byte[] b) {
+		char chValue = 0;
+
+		chValue += (b[0] & 0xFF) << 8;
+		chValue += b[1] & 0xFF;
+
+		return chValue;
+	}
+	
 }

@@ -10,7 +10,7 @@ public class HexWapper {
 	 * @param hexStr 16进制字符串
 	 * @return 二进制数组
 	 */
-	public static byte[] hexString2Byte(String hexStr) {
+	public static byte[] hexString2Bytes(String hexStr) {
 		if (hexStr.length() < 1)
 			return null;
 		byte[] result = new byte[hexStr.length() / 2];
@@ -20,6 +20,25 @@ public class HexWapper {
 			result[i] = (byte) (high * 16 + low);
 		}
 		return result;
+	}
+	
+	public static byte[] hexStringToBytes(String hexString) {  
+	    if (hexString == null || hexString.equals("")) {  
+	        return null;  
+	    }  
+	    hexString = hexString.toUpperCase();  
+	    int length = hexString.length() / 2;  
+	    char[] hexChars = hexString.toCharArray();  
+	    byte[] d = new byte[length];  
+	    for (int i = 0; i < length; i++) {  
+	        int pos = i * 2;  
+	        d[i] = (byte) (charToByte(hexChars[pos]) << 4 | charToByte(hexChars[pos + 1]));    
+	    }  
+	    return d;  
+	} 
+	
+	private static byte charToByte(char c) {  
+		return (byte) "0123456789ABCDEF".indexOf(c);  
 	}
 	
 	/**

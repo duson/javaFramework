@@ -277,7 +277,10 @@ public class Reflections {
 			}
 		}
 		return clazz;
+	}
 
+	private Class<?> getEntityClass() {
+		return (Class<?>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 	}
 	
 	/**
