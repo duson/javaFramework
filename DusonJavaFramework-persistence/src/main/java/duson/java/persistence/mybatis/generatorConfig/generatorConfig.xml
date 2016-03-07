@@ -2,7 +2,7 @@
 <!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
 <generatorConfiguration >
   <!-- <properties resource="generatorConfig.properties" /> -->
-  <classPathEntry location="mysql-connector-java-5.1.25.jar"/>
+  <classPathEntry location="mysql-connector-java-5.1.38.jar"/>
   <context id="context1" >
 	<plugin type="org.mybatis.generator.plugins.RenameExampleClassPlugin">  
 	    <property name="searchString" value="Example$" />  
