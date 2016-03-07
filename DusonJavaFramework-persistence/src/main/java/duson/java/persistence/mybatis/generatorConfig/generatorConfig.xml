@@ -14,13 +14,13 @@
     </commentGenerator> 
     <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://:3306/database" userId="root" password="" />
     
-    <javaModelGenerator targetPackage="实体类包名" targetProject="目标项目名">
+    <javaModelGenerator targetPackage="实体类包名" targetProject="目标项目名或路径">
     	<property name="trimStrings" value="true" />
     </javaModelGenerator>
-    <sqlMapGenerator targetPackage="持久层Mapper包名" targetProject="目标项目名">
+    <sqlMapGenerator targetPackage="持久层Mapper包名" targetProject="目标项目名或路径">
     	<property name="trimStrings" value="true" />
     </sqlMapGenerator>
-    <javaClientGenerator targetPackage="包名" targetProject="目标项目名" type="XMLMAPPER">
+    <javaClientGenerator targetPackage="包名" type="XMLMAPPER" targetProject="目标项目名或路径">
     	<property name="trimStrings" value="true" />
     </javaClientGenerator>
 
