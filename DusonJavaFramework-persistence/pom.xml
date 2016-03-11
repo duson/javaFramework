@@ -52,5 +52,10 @@
     	<artifactId>spring-orm</artifactId>
     	<version>4.2.4.RELEASE</version>
     </dependency>
+    <dependency>
+    	<groupId>com.github.pagehelper</groupId>
+    	<artifactId>pagehelper</artifactId>
+    	<version>4.0.3</version>
+    </dependency>
   </dependencies>
 </project>
