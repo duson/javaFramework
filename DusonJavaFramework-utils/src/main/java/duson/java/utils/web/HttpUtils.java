@@ -1,8 +1,11 @@
 package duson.java.utils.web;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -61,6 +64,43 @@ public class HttpUtils {
         }
         return result;
     }
+	
+	public void postFile(String url, String fileName, byte[] fileData) throws MalformedURLException, IOException {
+		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+		String end = "\r\n";
+		String twoHyphens = "--";
+		String boundary = "key";
+		conn.setUseCaches(false); // post方式不能使用缓存
+
+		// 采用流方式上传数据，无需本地缓存数据
+		conn.setChunkedStreamingMode(1024 * 1024);
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("connection", "Keep-Alive");
+		conn.setRequestProperty("Charset", "UTF-8");
+		conn.setRequestProperty("Content-type", "multipart/form-data;boundary=" + boundary);
+		conn.setRequestProperty("filename", fileName);
+		conn.setRequestProperty("Range", "" + 0L);
+		DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+		dos.writeBytes(twoHyphens + boundary + end);
+		dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\"; filename=\"" + fileName + "\"" + end);
+		dos.writeBytes(end);
+		dos.write(fileData);
+		// very import segment below
+		dos.writeBytes(end);
+		dos.writeBytes(twoHyphens + boundary + twoHyphens + end);
+		// very import segment above
+		dos.flush();
+		dos.close();
+
+		// 读取返回内容
+		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		String line = null;
+		while ((line = reader.readLine()) != null) {
+			
+		}
+	}
 	
 	public void get() throws Exception {  
         // 创建HttpClient实例  

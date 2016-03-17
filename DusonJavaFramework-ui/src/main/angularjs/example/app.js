@@ -21,8 +21,8 @@ define([ 'angularAMD', 'angular-route', 'angular-ui-route', 'angularStrap_tpl'],
 		$httpProvider.defaults.headers.post['Accept'] = 'application/json, text/javascript, */*; q=0.01';
 		$httpProvider.defaults.headers.post['X-Requested-With'] = 'XMLHttpRequest';
 		$httpProvider.defaults.transformRequest = [ function(data) {
-			
-		} ];
+			return angular.isObject(data) ? $.param(data) : data;
+		}];
 
 		$urlRouterProvider.otherwise("/");
 		$urlRouterProvider.when('/xxx', '/');

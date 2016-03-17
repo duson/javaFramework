@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="jwplayer.js"></script>
+</head>
+
+<body>
+
+<div id="player"></div>
+
+<script type="text/javascript">
+	jwplayer("player").setup({
+	  // skin: "glow.zip",
+	  stretching: "fill",
+	  flashplayer: "jwplayer.flash.swf",
+	  image: "player.jpg",
+	  controlbar: "none",
+	  width: 480,
+	  height:270,
+	  autostart: true,
+	  file: '',
+	  playlist: [{ duration: 32, file: "/uploads/video.mp4", image:"/uploads/video.jpg"},
+           { duration: 124, file: "/uploads/bbb.mp4", image:"/uploads/bbb.jpg" },
+           { duration: 542, file: "/uploads/ed.mp4", image:"/uploads/ed.jpg" }],
+      playlist.position: "right",
+	  events: {
+          /*
+          onComplete: function () { console.log("播放结束!!!"); },
+          onVolume: function () { console.log("声音大小改变!!!"); },
+          onReady: function () { console.log("准备就绪!!!"); },
+          onPlay: function () { console.log("开始播放!!!"); },
+          onPause: function () { console.log("暂停!!!"); },
+          onBufferChange: function () { console.log("缓冲改变!!!"); },
+          onBufferFull: function () { console.log("视频缓冲完成!!!"); },
+          onFullscreen: function (obj) { if (obj.fullscreen) { console.log("全屏"); } else { console.log("非全屏"); } },
+          onMute: function (obj) { console.log("静音/取消静音") },
+          onError: function (obj) { console.log("播放器出错!!!" + obj.message); }
+          */
+      }
+	});
+</script>
+</body>
+</html>
