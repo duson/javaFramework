@@ -1,0 +1,25 @@
+
+1.依赖：spring-boot-starter-web
+
+2.Pom文件
+  打包成可运行的Jar包：
+  
+  <build>
+    <plugins>
+        <plugin>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-maven-plugin</artifactId>
+        	<version>1.3.3.RELEASE</version>
+        	<executions>
+		        <execution>
+		          <goals>
+		            <goal>repackage</goal>
+		          </goals>
+		        </execution>
+		      </executions>
+        </plugin>
+    </plugins>
+  </build>
+  
+Maven运行命令：
+mvn spring-boot:run

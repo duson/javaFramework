@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>：jQuery省市区三级联动插件city-picker</title>
+<base target="_blank" />
+
+
+<!--必要样式-->
+<link href="city-picker.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<!-- Content -->
+<div class="container">
+
+<h2 class="page-header">演示</h2>
+
+<div class="docs-methods">
+<form class="form-inline">
+<div id="distpicker">
+<div class="form-group">
+<div style="position: relative;">
+<input id="city-picker3" class="form-control" readonly type="text" value="" data-toggle="city-picker">
+</div>
+</div>
+<div class="form-group">
+<button class="btn btn-warning" id="reset" type="button">重置</button>
+<button class="btn btn-danger" id="destroy" type="button">确定</button>
+</div>
+</div>
+</form>
+</div>
+
+</div>
+
+<script src="http://hovertree.com/ziyuan/jquery/jquery-1.12.1.min.js"></script>
+<script src="city-picker.data.js"></script>
+<script src="city-picker.js"></script>
+
+</body>
+
+<script>
+$(function () {
+
+    'use strict';
+
+
+    var $citypicker1 = $('#city-picker1');
+
+    $citypicker1.citypicker();
+
+    var $citypicker2 = $('#city-picker2');
+
+    $citypicker2.citypicker({
+        province: '江苏省',
+        city: '常州市',
+        district: '溧阳市'
+    });
+
+    var $citypicker3 = $('#city-picker3');
+
+    $('#reset').click(function () {
+        $citypicker3.citypicker('reset');
+    });
+
+    $('#destroy').click(function () {
+        $citypicker3.citypicker('destroy');
+    });
+    //
+    //$('#distpicker1').distpicker();
+    //
+    //$('#distpicker2').distpicker({
+    //  province: '---- 所在省 ----',
+    //  city: '---- 所在市 ----',
+    //  district: '---- 所在区 ----'
+    //});
+    //
+    //$('#distpicker3').distpicker({
+    //  province: '浙江省',
+    //  city: '杭州市',
+    //  district: '西湖区'
+    //});
+    //
+    //$('#distpicker4').distpicker({
+    //  placeholder: false
+    //});
+    //
+    //$('#distpicker5').distpicker({
+    //  autoSelect: false
+    //});
+
+});
+
+</script
+</html>
