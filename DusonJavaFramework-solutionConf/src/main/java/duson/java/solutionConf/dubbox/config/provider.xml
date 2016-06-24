@@ -27,9 +27,10 @@
 	<dubbo:protocol name="dubbo" port="20880"/>
 	<!-- 声明需要暴露的服务接口 -->
 	<dubbo:service interface="duson.java.solutionConf.dubbox.service.DemoService" ref="demoService" protocol="dubbo" />
+	<dubbo:provider filter="securityFilter" />
 	
 	<!-- REST服务 -->
-    <dubbo:protocol name="rest" port="8080" threads="500" contextpath="" server="servlet" accepts="500" />
+    <dubbo:protocol name="rest" port="8080" threads="500" contextpath="" server="servlet" accepts="500" extension="..." />
 	<dubbo:service interface="duson.java.solutionConf.dubbox.service.DemoService" ref="demoService" protocol="rest" />
 	
 	<!-- 和本地bean一样实现服务 -->

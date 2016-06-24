@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+  </head>
+  <body>
+	
+    <div ng-controller="AngularCtrl"></div>
+
+	<script src="require.js"></script>
+	<script src="app/main.js"></script>
+	
+	<script type="text/javascript">
+		
+		require(["jquery", "angular", "app/app", "app/AngularController"], function($, angular) {
+		    $(function() {
+		    	angular.bootstrap(document.documentElement, ['app文件中的模块名']);
+		    });
+		});
+		
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+	http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
+	
+	<!-- mongodb.host=192.168.65.4:10000,192.168.65.5:10000 #此处均为mongos -->
+	<mongo:mongo id="replicaSetMongo" replica-set="${mongodb.host}">
+	
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<!-- 非集群 -->
+		<constructor-arg>
+		    <bean class="com.mongodb.MongoClient">
+		       <constructor-arg value="${mongo.url}" />
+		       <constructor-arg value="${mongo.port}" />
+		    </bean>
+	    </constructor-arg>
+	    <!-- 集群 -->
+	    <constructor-arg name="mongo" ref="replicaSetMongo" />
+	  	<constructor-arg name="databaseName" value="${mongo.dbname}" />
+	  	<!-- 配置读写分离的模式：默认主节点模式，读操作只在主节点，如果主节点不可用，报错或者抛出异常。 -->
+		<!-- <property name="readPreference" ref="secondaryPreferredReadPreference"></property>  -->
+	</bean>
+	
+	<!-- 优先从secondary节点进行读取操作，secondary节点不可用时从主节点读取数据  -->
+	<bean id="secondaryPreferredReadPreference" class="com.mongodb.TaggableReadPreference.SecondaryPreferredReadPreference"></bean>
+	
+	<!-- mongodb bean的仓库目录，会自动扫描扩展了MongoRepository接口的接口进行注入 -->
+	<!-- <mongo:repositories base-package="com.xxx.repository">
+	</mongo:repositories> -->
+
+</beans>

@@ -23,3 +23,25 @@
   
 Maven运行命令：
 mvn spring-boot:run
+
+如果部署到Tomcat中
+1.修改pom.xml文件：
+<packaging>war</packaging>
+
+2.修改启动类
+
+官方参考： http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto-create-a-deployable-war-file
+
+    @SpringBootApplication
+    public class Application extends SpringBootServletInitializer {
+
+        @Override
+        protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+            return application.sources(Application.class);
+        }
+
+        public static void main(String[] args) throws Exception {
+            SpringApplication.run(Application.class, args);
+        }
+
+    }

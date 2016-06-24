@@ -71,7 +71,7 @@ public class HttpUtils {
 		conn.setDoOutput(true);
 		String end = "\r\n";
 		String twoHyphens = "--";
-		String boundary = "key";
+		String boundary = "<Boundary>"; // 分隔字符串
 		conn.setUseCaches(false); // post方式不能使用缓存
 
 		// 采用流方式上传数据，无需本地缓存数据

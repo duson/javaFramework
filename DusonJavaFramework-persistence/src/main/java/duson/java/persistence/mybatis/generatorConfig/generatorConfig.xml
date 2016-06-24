@@ -13,19 +13,24 @@
        <property name="suppressAllComments" value="true" />  
     </commentGenerator> 
     <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://:3306/database" userId="root" password="" />
+    <javaTypeResolver>
+		<property name="forceBigDecimals" value="false" />
+	</javaTypeResolver>
     
-    <javaModelGenerator targetPackage="实体类包名" targetProject="目标项目名或路径">
+    <javaModelGenerator targetPackage="实体类包名" targetProject="目标项目名或相对路径">
+    	<property name="enableSubPackages" value="true" />
     	<property name="trimStrings" value="true" />
     </javaModelGenerator>
-    <sqlMapGenerator targetPackage="持久层Mapper包名" targetProject="目标项目名或路径">
+    <sqlMapGenerator targetPackage="持久层Mapper包名" targetProject="目标项目名或相对路径">
     	<property name="trimStrings" value="true" />
     </sqlMapGenerator>
-    <javaClientGenerator targetPackage="包名" type="XMLMAPPER" targetProject="目标项目名或路径">
+    <javaClientGenerator targetPackage="包名" type="XMLMAPPER" targetProject="目标项目名或相对路径">
     	<property name="trimStrings" value="true" />
     </javaClientGenerator>
 
     <table schema="数据库名" tableName="表名" domainObjectName="Java类名" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
       <property name="useActualColumnNames" value="true" /> 
+      <!-- <columnOverride column="列名" jdbcType="VARCHAR" javaType="java.lang.String" /> -->
     </table>
      
   </context>
