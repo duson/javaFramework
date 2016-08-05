@@ -1,4 +1,4 @@
-package duson.java.solutionConf.ehcache;
+package duson.java.solutionConf.cache.ehcache;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;

@@ -1,4 +1,4 @@
-package duson.java.utils.redis;
+package duson.java.solutionConf.cache.jedis;
 
 import java.util.ArrayList;
 import java.util.HashSet;

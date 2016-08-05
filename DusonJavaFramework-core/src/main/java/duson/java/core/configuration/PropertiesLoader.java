@@ -7,10 +7,13 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 public class PropertiesLoader
 {
 	private final Properties properties;
+	// 第二种方式
+	private static final ResourceBundle bundle = ResourceBundle.getBundle("配置文件路径");
 
 	public PropertiesLoader(String... resourcesPaths)
 	{

@@ -3,3 +3,6 @@
 Spring：spring-webmvc、spring-jdbc、spring-context-support、
 切面：aspectjweaver（org.aspectj）、aspectjrt（org.aspectj）、
 字节动态代理：cglib
+
+servlet和jsp支持:
+servlet-api(javax.servlet)、jsp-api(javax.servlet.jsp)、jstl

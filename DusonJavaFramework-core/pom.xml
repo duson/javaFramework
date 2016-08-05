@@ -51,6 +51,26 @@
     	<artifactId>commons-codec</artifactId>
     	<version>1.10</version>
     </dependency>
+    <dependency>
+    	<groupId>org.hibernate</groupId>
+    	<artifactId>hibernate-validator</artifactId>
+    	<version>5.2.2.Final</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.google.guava</groupId>
+    	<artifactId>guava</artifactId>
+    	<version>19.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>net.sf.dozer</groupId>
+    	<artifactId>dozer</artifactId>
+    	<version>5.5.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>ma.glasnost.orika</groupId>
+    	<artifactId>orika-core</artifactId>
+    	<version>1.5.0-beta0</version>
+    </dependency>
   </dependencies>
 	<build>
 		<finalName>DusonJavaFramework-core</finalName>

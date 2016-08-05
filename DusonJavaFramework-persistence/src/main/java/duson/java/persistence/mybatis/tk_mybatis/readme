@@ -1,0 +1,3 @@
+tk.mybatis：mapper(tk.mybatis)
+代码生成工具：mybatis-generator-core
+分页控件：com.github.pagehelper、

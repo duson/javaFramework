@@ -1,3 +1,4 @@
 
-1.Maven引用包名：mybatis、mybatis-spring
-2.分页控件引用：mybatis-paginator
+1.spring-orm
+2.Maven引用包名：mybatis、mybatis-spring
+3.分页控件引用：mybatis-paginator

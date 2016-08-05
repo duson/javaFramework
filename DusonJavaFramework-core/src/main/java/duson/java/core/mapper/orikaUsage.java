@@ -1,4 +1,4 @@
-package duson.java.utils.mapper;
+package duson.java.core.mapper;
 
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;

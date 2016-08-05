@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title ng-bind="pageTitle"></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+  </head>
+  <body>
+  
+  	<button has-permission func="{{Privilege.Program}}" opera="{{Operation.Add}}" >操作</button>
+  	
+	<script type="text/javascript">
+		// Js中判断是否有权限
+		PermissionService.hasPermission($rootScope.Privilege.Program, $rootScope.Operation.Update);
+		
+		define([ 'common/constant/privilege', 'permissionService' ], function(Privilege) {
+			var app = angular.module("Module", [ 'commonModule' ]);
+			
+			app.run(function(PermissionService, $rootScope) {
+				
+				// 全局功能和操作
+				$rootScope.Privilege = Privilege.Privilege;
+				$rootScope.Operation = Privilege.Operation;
+				
+				$rootScope.$on("$stateChangeStart", function (event, next, current) {
+					if(next && next.func) {
+						var func = next.func;
+						var opera = 0;
+						if(next.opera) 
+							opera = next.opera;
+					    if(!PermissionService.hasPermission(func, opera)) {
+					    	//$location.path('/unauthorized');
+					    	$window.location.href = 'index.html#/unauthorized';
+					    }
+					}
+			    });
+
+			});
+			
+			// 路由配置权限
+			app.config(function($stateProvider, $urlRouterProvider) {
+
+				var Priv= Privilege.Privilege;
+				var Opera = Privilege.Operation;
+				
+				$urlRouterProvider.otherwise("/");
+				$urlRouterProvider.when('/a', '/b');
+
+				$stateProvider.state("test", angularAMD.route({
+					url : "/test",
+					templateUrl : 'index.html',
+					controller : 'Ctrl',
+					controllerUrl : 'index',
+					func: Priv.Test, 
+					opera: Opera.View
+				}));
+			});
+			
+		)};
+	</script>
+
+</body>
+</html>

@@ -86,6 +86,7 @@
 
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="readWriteDataSource" />
+		<property name="globalRollbackOnParticipationFailure" value="false" /> <!-- 让主事务决定回滚 -->
 	</bean>
 	
 	<!-- 启用 annotation事务--> 

@@ -17,6 +17,20 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
 public class ShiroDbRealm extends AuthorizingRealm {
+
+	@Override
+	protected AuthenticationInfo doGetAuthenticationInfo(
+			AuthenticationToken authcToken) throws AuthenticationException {
+		UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) authcToken;
+		
+		Object user = null; // 根据用户名(usernamePasswordToken.getUsername())从数据库中查询用户信息  
+        if (user != null) {  
+            SecurityUtils.getSubject().getSession().setAttribute("loginUserInfo", user);  
+            return new SimpleAuthenticationInfo(user, "", getName());  
+        } else {  
+            return null;  
+        } 
+	}
 	
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -33,18 +47,5 @@ public class ShiroDbRealm extends AuthorizingRealm {
         } 
 	}
 
-	@Override
-	protected AuthenticationInfo doGetAuthenticationInfo(
-			AuthenticationToken authcToken) throws AuthenticationException {
-		UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) authcToken;
-		
-		Object user = null; // 根据用户名(usernamePasswordToken.getUsername())从数据库中查询用户信息  
-        if (user != null) {  
-            SecurityUtils.getSubject().getSession().setAttribute("loginUserInfo", user);  
-            return new SimpleAuthenticationInfo(user, "", getName());  
-        } else {  
-            return null;  
-        } 
-	}
 	
 }
