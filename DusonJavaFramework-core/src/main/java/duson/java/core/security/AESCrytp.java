@@ -89,6 +89,75 @@ public class AESCrytp {
 		return BytesWapper.byte2HexStringByCommonsCodec(aesEncrypt(input.getBytes(DEFAULT_URL_ENCODING), DEFAULT_KEY));
 	}
 
+	/*
+	* 支付宝的实现
+	---------------------------------------------------------------------*/
+
+	public static String encrypt(String content, String key) throws Exception {
+        //String key = "开发者自己的AES秘钥";
+        //String content = "需要加密的参数";
+        String charset = "UTF-8"; // 项目使用的字符编码集
+        String fullAlg = "AES/CBC/PKCS5Padding";
+  
+        Cipher cipher = Cipher.getInstance(fullAlg);
+        IvParameterSpec iv = new IvParameterSpec(initIv(fullAlg));
+        cipher.init(Cipher.ENCRYPT_MODE,
+                new SecretKeySpec(Base64.decodeBase64(key.getBytes()), "AES"),
+                iv);
+  
+        byte[] encryptBytes = cipher.doFinal(content.getBytes(charset));
+        return new String(Base64.encodeBase64(encryptBytes));
+    }
+   
+    /**
+     * 初始向量的方法, 全部为0. 这里的写法适合于其它算法,针对AES算法的话,IV值一定是128位的(16字节).
+     *
+     * @param fullAlg
+     * @return
+     * @throws GeneralSecurityException
+     */
+    private static byte[] initIv(String fullAlg) throws GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance(fullAlg);
+        int blockSize = cipher.getBlockSize();
+        byte[] iv = new byte[blockSize];
+        for (int i = 0; i < blockSize; ++i) {
+            iv[i] = 0;
+        }
+        return iv;
+    }
+
+	/**
+     * 解密
+     * @param content 密文
+     * @param key aes密钥
+     * @param charset 字符集
+     * @return 原文
+     * @throws EncryptException
+     */
+    public String decrypt(String content, String key, String charset) throws Exception {
+          
+        //反序列化AES密钥
+        SecretKeySpec keySpec = new SecretKeySpec(Base64.decodeBase64(key.getBytes()), "AES");
+          
+        //128bit全零的IV向量
+        byte[] iv = new byte[16];
+        for (int i = 0; i < iv.length; i++) {
+            iv[i] = 0;
+        }
+        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+          
+        //初始化加密器并加密
+        Cipher deCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        deCipher.init(Cipher.DECRYPT_MODE, keySpec, ivParameterSpec);
+        byte[] encryptedBytes = Base64.decodeBase64(content.getBytes(charset));
+        byte[] bytes = deCipher.doFinal(encryptedBytes);
+        return new String(bytes);
+    }
+
+	/*
+	* 复杂
+	---------------------------------------------------------------------*/
+	 */
 	/**
 	 * 使用AES加密原始字符串.
 	 * 

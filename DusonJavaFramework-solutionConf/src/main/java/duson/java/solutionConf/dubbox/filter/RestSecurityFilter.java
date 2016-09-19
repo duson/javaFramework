@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.security.Principal;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -16,34 +17,51 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.springframework.http.MediaType;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class RestSecurityFilter implements ContainerRequestFilter {
 	@Context
-    HttpServletRequest request;
+	HttpServletRequest request;
     @Context
     private HttpServletResponse response;
     
 	@Override
 	public void filter(ContainerRequestContext cxt) throws IOException {
+		// 引用其它服务类
+		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(request.getServletContext());
+		//wac.getBean(RefrenceClass.class);
+		
+		// 数据共享
+		SecurityContext securityContext = bulidSecurityContext("要共享数据");
+		cxt.setSecurityContext(securityContext);
+		
 		Map params = new HashMap();
 		
-		if(cxt.getMethod().toUpperCase().equals("POST")) {
+		if(cxt.getMethod().toUpperCase().equals("POST") && cxt.getMediaType().equals(javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE)) {
 			InputStream input = cxt.getEntityStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+			
 			StringBuilder sb = new StringBuilder();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 			String tmp = "";
 			while((tmp = reader.readLine()) != null) {
 				sb.append(tmp);
 			}
+        
 			String cnt = sb.toString();
-
-			List<NameValuePair> paramList = URLEncodedUtils.parse(cnt, Charset.forName("UTF-8"));
-			for(NameValuePair param : paramList)
-				params.put(param.getName(), param.getValue());
+			
+			byte[] requestEntity = cnt.getBytes("UTF-8");
+			cxt.setEntityStream(new ByteArrayInputStream(requestEntity));
+			
+			JSONObject json = JSON.parseObject(cnt);
+			for(Map.Entry<String, Object> kv : json.entrySet()) {
+				params.put(kv.getKey(), kv.getValue());
+			}
 		} else {
 			Enumeration<String> paramNames = request.getParameterNames();
 			String key = null;
@@ -91,4 +109,24 @@ public class RestSecurityFilter implements ContainerRequestFilter {
 		cxt.abortWith(Response.status(500).type(MediaType.APPLICATION_JSON_UTF8_VALUE).entity(result).build());
 	}
 	
+	public static SecurityContext bulidSecurityContext(final String value){
+        return new SecurityContext() {                
+            @Override
+            public boolean isUserInRole(String role) {
+                return false;
+            }
+            @Override
+            public boolean isSecure() {
+                return false;
+            }
+            @Override
+            public Principal getUserPrincipal() {
+                return null;
+            }
+            @Override
+            public String getAuthenticationScheme() {
+                return value;
+            }
+        };
+    }
 }

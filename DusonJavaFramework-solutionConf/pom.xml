@@ -31,6 +31,12 @@
     	<groupId>org.apache.shiro</groupId>
     	<artifactId>shiro-cas</artifactId>
     	<version>1.2.4</version>
+    	<exclusions>
+    		<exclusion>
+    			<artifactId>servlet-api</artifactId>
+    			<groupId>javax.servlet</groupId>
+    		</exclusion>
+    	</exclusions>
     </dependency>
     <dependency>
     	<groupId>net.sf.ehcache</groupId>
@@ -81,6 +87,12 @@
     	<groupId>DusonJavaFramework-utils</groupId>
     	<artifactId>DusonJavaFramework-utils</artifactId>
     	<version>1.0.0</version>
+    	<exclusions>
+    		<exclusion>
+    			<artifactId>servlet-api</artifactId>
+    			<groupId>javax.servlet</groupId>
+    		</exclusion>
+    	</exclusions>
     </dependency>
     <dependency>
     	<groupId>org.apache.cxf</groupId>
@@ -111,6 +123,16 @@
     	<groupId>org.apache.oltu.oauth2</groupId>
     	<artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
     	<version>1.0.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.jboss.resteasy</groupId>
+    	<artifactId>resteasy-jaxrs</artifactId>
+    	<version>3.0.14.Final</version>
+    </dependency>
+    <dependency>
+    	<groupId>javax.servlet</groupId>
+    	<artifactId>javax.servlet-api</artifactId>
+    	<version>4.0.0-b01</version>
     </dependency>
   </dependencies>
 </project>

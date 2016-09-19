@@ -33,101 +33,130 @@
     </dependency> 
 	
 	<!-- 服务端完整依赖 -->
+    加载本地dubbo-2.8.4.jar
     <dependency>
-    	<groupId>javax.validation</groupId>
-    	<artifactId>validation-api</artifactId>
-    	<version>1.1.0.Final</version>
+        <groupId>com.alibaba</groupId>
+        <artifactId>dubbo</artifactId>
+        <version>2.8.4</version>
+        <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/dubbo-2.8.4.jar</systemPath>
+        <scope>system</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>3.15.0-GA</version>
     </dependency>
     <dependency>
-    	<groupId>org.hibernate</groupId>
-    	<artifactId>hibernate-validator</artifactId>
-    	<version>5.2.2.Final</version>
+        <groupId>io.netty</groupId>
+        <artifactId>netty</artifactId>
+        <version>3.7.0.Final</version>
     </dependency>
     <dependency>
-    	<groupId>com.github.sgroschupf</groupId>
-    	<artifactId>zkclient</artifactId>
-    	<version>0.1</version>
+        <groupId>org.apache.mina</groupId>
+        <artifactId>mina-core</artifactId>
+        <version>1.1.7</version>
     </dependency>
     <dependency>
-    	<groupId>org.javassist</groupId>
-    	<artifactId>javassist</artifactId>
-    	<version>3.20.0-GA</version>
+        <groupId>org.glassfish.grizzly</groupId>
+        <artifactId>grizzly-core</artifactId>
+        <version>2.1.4</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.mina</groupId>
-    	<artifactId>mina-core</artifactId>
-    	<version>3.0.0-M2</version>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>4.2.1</version>
     </dependency>
     <dependency>
-    	<groupId>org.glassfish.grizzly</groupId>
-    	<artifactId>grizzly-core</artifactId>
-    	<version>2.3.23</version>
+        <groupId>com.alibaba</groupId>
+        <artifactId>fastjson</artifactId>
+        <version>1.1.39</version>
     </dependency>
     <dependency>
-    	<groupId>com.thoughtworks.xstream</groupId>
-    	<artifactId>xstream</artifactId>
-    	<version>1.4.8</version>
+        <groupId>com.thoughtworks.xstream</groupId>
+        <artifactId>xstream</artifactId>
+        <version>1.4.1</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.bsf</groupId>
-    	<artifactId>bsf-api</artifactId>
-    	<version>3.1</version>
+        <groupId>org.apache.bsf</groupId>
+        <artifactId>bsf-api</artifactId>
+        <version>3.1</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.curator</groupId>
-    	<artifactId>curator-framework</artifactId>
-    	<version>3.0.0</version>
+        <groupId>org.apache.zookeeper</groupId>
+        <artifactId>zookeeper</artifactId>
+        <version>3.4.6</version>
     </dependency>
     <dependency>
-    	<groupId>redis.clients</groupId>
-    	<artifactId>jedis</artifactId>
-    	<version>2.8.0</version>
+        <groupId>com.github.sgroschupf</groupId>
+        <artifactId>zkclient</artifactId>
+        <version>0.1</version>
     </dependency>
     <dependency>
-    	<groupId>com.googlecode.xmemcached</groupId>
-    	<artifactId>xmemcached</artifactId>
-    	<version>2.0.0</version>
+        <groupId>org.apache.curator</groupId>
+        <artifactId>curator-framework</artifactId>
+        <version>2.5.0</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.cxf</groupId>
-    	<artifactId>cxf-rt-frontend-simple</artifactId>
-    	<version>3.1.4</version>
+        <groupId>com.googlecode.xmemcached</groupId>
+        <artifactId>xmemcached</artifactId>
+        <version>1.3.6</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.cxf</groupId>
-    	<artifactId>cxf-rt-transports-http</artifactId>
-    	<version>3.1.4</version>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-simple</artifactId>
+        <version>2.6.1</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.thrift</groupId>
-    	<artifactId>libthrift</artifactId>
-    	<version>0.9.3</version>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-transports-http</artifactId>
+        <version>2.6.1</version>
     </dependency>
     <dependency>
-    	<groupId>com.caucho</groupId>
-    	<artifactId>hessian</artifactId>
-    	<version>4.0.38</version>
+        <groupId>org.apache.thrift</groupId>
+        <artifactId>libthrift</artifactId>
+        <version>0.8.0</version>
     </dependency>
     <dependency>
-    	<groupId>javax.servlet</groupId>
-    	<artifactId>javax.servlet-api</artifactId>
-    	<version>4.0.0-b01</version>
+        <groupId>com.caucho</groupId>
+        <artifactId>hessian</artifactId>
+        <version>4.0.7</version>
     </dependency>
     <dependency>
-    	<groupId>org.mortbay.jetty</groupId>
-    	<artifactId>jetty</artifactId>
-    	<version>7.0.0.pre5</version>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>3.1.0</version>
     </dependency>
     <dependency>
-    	<groupId>javax.cache</groupId>
-    	<artifactId>cache-api</artifactId>
-    	<version>1.0.0-PFD</version>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty</artifactId>
+        <version>6.1.26</version>
+        <exclusions>
+            <exclusion>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>servlet-api</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty</artifactId>
-      <version>3.7.0.Final</version>
-      <scope>compile</scope>
+        <groupId>redis.clients</groupId>
+        <artifactId>jedis</artifactId>
+        <version>2.1.0</version>
+    </dependency>
+    <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>1.0.0.GA</version>
+    </dependency>
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>4.2.0.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>javax.cache</groupId>
+        <artifactId>cache-api</artifactId>
+        <version>0.4</version>
     </dependency>
     
     <!-- Web方式宿主的 还需要引入下面依赖 -->
@@ -136,53 +165,34 @@
     	<artifactId>spring-web</artifactId>
     	<version>4.2.4.RELEASE</version>
     </dependency>
-        
-     <!--
      <dependency>
-    	<groupId>javax.annotation</groupId>
-    	<artifactId>javax.annotation-api</artifactId>
-    	<version>1.2</version>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-expression</artifactId>
+        <version>4.2.4.RELEASE</version>        
     </dependency>
-    <dependency>
-    	<groupId>org.apache.tuscany.sca</groupId>
-    	<artifactId>tuscany-sca-api</artifactId>
-    	<version>2.0.1</version>
-    </dependency>
-    <dependency>
-    	<groupId>com.google.inject</groupId>
-    	<artifactId>guice</artifactId>
-    	<version>4.0</version>
-    </dependency> 
-     <dependency>
-    	<groupId>jfree</groupId>
-    	<artifactId>jfreechart</artifactId>
-    	<version>1.0.13</version>
-    </dependency>
-     <dependency>
-    	<groupId>org.jvnet.sorcerer</groupId>
-    	<artifactId>sorcerer-javac</artifactId>
-    	<version>0.8</version>
-    </dependency>
-    -->
        
     <!-- REST 还需要引入下面依赖 -->
-    </dependency>
-        <dependency>
-    	<groupId>javax.ws.rs</groupId>
-    	<artifactId>javax.ws.rs-api</artifactId>
-    	<version>2.0.1</version>
+    <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-jaxrs</artifactId>
+        <version>3.0.7.Final</version>
     </dependency>
     <dependency>
-    	<groupId>org.jboss.resteasy</groupId>
-    	<artifactId>resteasy-client</artifactId>
-    	<version>3.0.11.Final</version>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-client</artifactId>
+        <version>3.0.7.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-netty</artifactId>
+        <version>3.0.7.Final</version>
     </dependency>
 
     <!-- 如果要使用json序列化 -->
      <dependency>
     	<groupId>org.jboss.resteasy</groupId>
-    	<artifactId>resteasy-jackson2-provider</artifactId>
-    	<version>3.0.14.Final</version>
+    	<artifactId>resteasy-jackson-provider</artifactId>
+    	<version>3.0.7.Final</version>
     </dependency>
 	
 	<!-- 如果要使用xml序列化 -->
