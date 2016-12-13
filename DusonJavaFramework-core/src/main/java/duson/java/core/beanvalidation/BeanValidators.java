@@ -22,6 +22,8 @@ import com.google.common.collect.Maps;
  * 2. List<String>, String内容为propertyPath + separator + message
  * 3. Map<propertyPath, message>
  * 
+ * 需要引入 javax.el-api
+ * 
  * 详情见wiki: https://github.com/springside/springside4/wiki/HibernateValidator
  * @author calvin
  * @version 2013-01-15

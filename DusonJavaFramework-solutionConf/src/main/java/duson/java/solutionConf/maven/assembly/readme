@@ -2,3 +2,5 @@
 Maven 自定义打包，可拷贝指定文件，可根据发环境和生产创建产生文件或压缩文件
 命令：
 maven package -P dev或release
+
+通用环境打包命令： mvn -Denv=_[环境] -Dsite=_[网站名] package -Pcommon

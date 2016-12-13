@@ -16,6 +16,8 @@ public class CustomExceptionMapper implements ExceptionMapper<Exception> {
 		String msg = "操作失败，请稍候访问";
 		if(arg0 instanceof CreditException)
 			msg = ((CreditException)arg0).getMessage();
+		else if(ex instanceof JsonParseException || ex instanceof UnrecognizedPropertyException) 
+			msg = "参数格式不正确";
 		else if(arg0 instanceof RuntimeException)
 			msg = arg0.getMessage();
 		result.setErrorMsg(msg);

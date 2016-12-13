@@ -116,11 +116,51 @@ public class HttpUtils {
             System.out.println(data);  
         }  
     }
+
+    // 证书进行https加密传输
+    private void excuteWithSSL() {
+        KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        FileInputStream instream = new FileInputStream(new File("CertLocalPath")); //加载本地的证书进行https加密传输 JAVA只需要使用apiclient_cert.p12即可
+        try {
+            keyStore.load(instream, "CertPassword".toCharArray());//设置证书密码  PKCS12的密码(商户ID)
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } finally {
+            instream.close();
+        }
+
+        // Trust own CA and all self-signed certs
+        SSLContext sslcontext = SSLContexts.custom()
+                .loadKeyMaterial(keyStore, "CertPassword".toCharArray())
+                .build();
+        // Allow TLSv1 protocol only
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+                sslcontext,
+                new String[]{"TLSv1"},
+                null,
+                SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+
+        HttpClients httpClient = HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
+                .build();
+    }
 	
 	public void post() throws ClientProtocolException, IOException {
 		HttpClient client = new DefaultHttpClient();
+        // client = (DefaultHttpClient) HttpClientConnectionManager.getSSLInstance(httpclient);
+        client.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
+
 		HttpPost post = new HttpPost("http://");
+        // HttpPost post = HttpClientConnectionManager.getPostMethod(url);
 		post.setHeader("auth", "");
+
+        // 可设置请求器的配置
+        // int socketTimeout = 10000; // 连接超时时间，默认10秒
+        // int connectTimeout = 30000; // 传输超时时间，默认30秒
+        // RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(socketTimeout).setConnectTimeout(connectTimeout).build();
+        // post.setConfig(requestConfig);
 		
 		// 构造post参数  
         List<NameValuePair> params = new ArrayList<NameValuePair>();  
@@ -142,4 +182,101 @@ public class HttpUtils {
             System.out.println(data);  
         }
 	}
+
+    /**
+     * 执行Http请求
+     * 
+     * @param request 请求数据
+     * @param strParaFileName 文件类型的参数名
+     * @param strFilePath 文件路径
+     * @return 
+     * @throws HttpException, IOException 
+     */
+    public HttpResponse postFile(HttpRequest request, String strParaFileName, String strFilePath) throws HttpException, IOException {
+        // HTTP连接管理器，该连接管理器必须是线程安全的.
+        HttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
+        connectionManager.getParams().setDefaultMaxConnectionsPerHost(30);
+        connectionManager.getParams().setMaxTotalConnections(80);
+
+        IdleConnectionTimeoutThread ict = new IdleConnectionTimeoutThread();
+        ict.addConnectionManager(connectionManager);
+        ict.setConnectionTimeout(60000); /** 闲置连接超时时间, 由bean factory设置，缺省为60秒钟 */
+
+        HttpClient httpclient = new HttpClient(connectionManager);
+
+        // 设置连接超时 
+        int connectionTimeout = 8000; /** 连接超时时间，由bean factory设置，缺省为8秒钟 */
+        if (request.getConnectionTimeout() > 0) {
+            connectionTimeout = request.getConnectionTimeout();
+        }
+        httpclient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
+
+        // 设置回应超时
+        int soTimeout = 30000; /** 回应超时时间, 由bean factory设置，缺省为30秒钟 */
+        if (request.getTimeout() > 0) {
+            soTimeout = request.getTimeout();
+        }
+        httpclient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
+
+        // 设置等待ConnectionManager释放connection的时间 /** 默认等待HttpConnectionManager返回连接超时（只有在达到最大连接数时起作用）：1秒*/
+        httpclient.getParams().setConnectionManagerTimeout(3000);
+
+        String charset = request.getCharset();
+        charset = charset == null ? DEFAULT_CHARSET : charset;
+        HttpMethod method = null;
+
+        //get模式且不带上传文件
+        if (request.getMethod().equals(HttpRequest.METHOD_GET)) {
+            method = new GetMethod(request.getUrl()setCredentialCharset);
+            method.getParams().(charset);
+
+            // parseNotifyConfig会保证使用GET方法时，request一定使用QueryString
+            method.setQueryString(request.getQueryString());
+        } else if(strParaFileName.equals("") && strFilePath.equals("")) {
+            //post模式且不带上传文件
+            method = new PostMethod(request.getUrl());
+            ((PostMethod) method).addParameters(request.getParameters());
+            method.addRequestHeader("Content-Type", "application/x-www-form-urlencoded; text/html; charset=" + charset);
+        }
+        else {
+            //post模式且带上传文件
+            method = new PostMethod(request.getUrl());
+            List<Part> parts = new ArrayList<Part>();
+            for (int i = 0; i < request.getParameters().length; i++) {
+                parts.add(new StringPart(request.getParameters()[i].getName(), request.getParameters()[i].getValue(), charset));
+            }
+            //增加文件参数，strParaFileName是参数名，使用本地文件
+            parts.add(new FilePart(strParaFileName, new FilePartSource(new File(strFilePath))));
+            
+            // 设置请求体
+            ((PostMethod) method).setRequestEntity(new MultipartRequestEntity(parts.toArray(new Part[0]), new HttpMethodParams()));
+        }
+
+        // 设置Http Header中的User-Agent属性
+        method.addRequestHeader("User-Agent", "Mozilla/4.0");
+        HttpResponse response = new HttpResponse();
+
+        try {
+            httpclient.executeMethod(method);
+            if (request.getResultType().equals(HttpResultType.STRING)) {
+                response.setStringResult(method.getResponseBodyAsString());
+            } else if (request.getResultType().equals(HttpResultType.BYTES)) {
+                response.setByteResult(method.getResponseBody());
+            }
+            response.setResponseHeaders(method.getResponseHeaders());
+        } catch (UnknownHostException ex) {
+
+            return null;
+        } catch (IOException ex) {
+
+            return null;
+        } catch (Exception ex) {
+
+            return null;
+        } finally {
+            method.releaseConnection();
+        }
+        return response;
+    }
+
 }

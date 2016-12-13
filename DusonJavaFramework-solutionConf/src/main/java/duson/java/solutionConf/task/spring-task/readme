@@ -1,0 +1,14 @@
+
+1.依赖：
+spring-context
+
+注解
+
+@Scheduled(cron = "0 0 2 * * *")
+方法名
+
+cron：指定cron表达式
+zone：指定时区
+fixedRate：从上一个任务开始到下一个任务开始的间隔，单位是毫秒
+fixedDelay：从上一个任务完成到下一个任务开始的间隔，单位是毫秒
+initialDelay：任务第一次执行前需要延迟的毫秒数

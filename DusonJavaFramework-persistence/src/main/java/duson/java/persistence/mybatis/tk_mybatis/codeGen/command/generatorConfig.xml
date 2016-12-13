@@ -10,9 +10,10 @@
 		<property name="javaFileEncoding" value="UTF-8" />
 		<property name="beginningDelimiter" value="`" />
 		<property name="endingDelimiter" value="`" />
+		<property name="useActualColumnNames" value="true" />
 		<plugin type="tk.mybatis.mapper.generator.MapperPlugin">
 			<!-- <property name="mappers" value="tk.mybatis.mapper.common.Mapper"/> -->
-			<property name="mappers" value="xxx.xxx" />
+			<property name="mappers" value="com.protruly.mybatis.mapper.BaseMapper" />
 			<!-- caseSensitive默认false，当数据库表名区分大小写时，可以将该属性设置为true -->
 			<property name="caseSensitive" value="true" />
 		</plugin>
@@ -20,20 +21,22 @@
 			<property name="suppressDate" value="true" />
 		</commentGenerator>
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-			connectionURL="jdbc:mysql://192.168.1.223:3306/protruly_credit?useUnicode=true&amp;characterEncoding=utf-8" userId="root" password="654321">
+			connectionURL="jdbc:mysql://192.168.1.x:3306/x?useUnicode=true&amp;characterEncoding=utf-8" userId="root" password="654321">
 		</jdbcConnection>
-		<javaModelGenerator targetPackage="xxx.xxx" targetProject="code">
+		<javaModelGenerator
+			targetPackage="xxx.service.modules.trade.entity"
+			targetProject="code">
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
 
-		<sqlMapGenerator targetPackage="mybatisMapper"
-			targetProject="code" />
+		<sqlMapGenerator targetPackage="mybatisMapper" targetProject="code" />
 
-		<javaClientGenerator targetPackage="xxx.xxx" targetProject="code" type="XMLMAPPER" />
+		<javaClientGenerator targetPackage="xxx.service.modules.trade.dao" targetProject="code" type="XMLMAPPER" />
 
-		<table tableName="" domainObjectName="">
-			<generatedKey column="" sqlStatement="Mysql" identity="false" />
-		</table>
-		
+		<!--
+		<table tableName="pay_balance" domainObjectName="Balance"><property name="useActualColumnNames" value="true" />
+			<generatedKey column="BalanceID" sqlStatement="Mysql" identity="false" /></table>
+		-->
+			
 	</context>
 </generatorConfiguration>

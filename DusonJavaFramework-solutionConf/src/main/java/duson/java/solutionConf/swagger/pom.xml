@@ -1,0 +1,60 @@
+
+		<dependency>
+			<groupId>com.wordnik</groupId>
+			<artifactId>swagger-core</artifactId>
+			<version>1.5.3-M1</version>
+		</dependency>
+
+
+	<build>
+		<plugins>
+			<plugin>
+                <groupId>com.github.kongchen</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <apiSources>
+                      <apiSource>
+                            <springmvc>false</springmvc>
+                            <locations>com.xx.xx</locations>
+                            <schemes>http,https</schemes>
+                            <host>localhost:8082</host>
+                            <basePath>/</basePath>
+                            <info>
+                                <title>Api接口文档</title>
+                                <version>v1</version>
+                                <description>Api接口文档</description>
+                                <termsOfService>
+                                    http://www.github.com/kongchen/swagger-maven-plugin
+                                </termsOfService>
+                                <contact>
+                                    <email></email>
+                                    <name></name>
+                                    <url></url>
+                                </contact>
+                                <license>
+                                    <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+                                    <name>Apache 2.0</name>
+                                </license>
+                            </info>
+                            <!-- <templatePath></templatePath>
+                            <outputPath></outputPath> -->
+                            <swaggerDirectory>${basedir}/src/main/webapp/swagger-ui</swaggerDirectory>
+                            <swaggerApiReader>com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader</swaggerApiReader>
+			                <!-- <attachSwaggerArtifact>true</attachSwaggerArtifact> -->
+                        </apiSource>
+                    </apiSources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+		</plugins>
+
+	</build>

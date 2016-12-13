@@ -6,8 +6,29 @@
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd"
 	default-lazy-init="true">
 	
-	<!-- 计划任务配置，用 @Service @Lazy(false)标注类，用@Scheduled(cron = "0 0 2 * * ?")标注方法 -->
-    <task:executor id="executor" pool-size="10"/> <task:scheduler id="scheduler" pool-size="10"/>
+	<!-- 注解方式 -->
+
+	<!-- @Service @Lazy(false)标注类，用@Scheduled(cron = "0 0 2 * * ?")标注方法 -->
+    <task:executor id="executor" pool-size="10"/> 
+    <!--内部使用的线程池，配置线程池，指定线程池的大小-->
+    <task:scheduler id="scheduler" pool-size="10"/>
     <task:annotation-driven scheduler="scheduler" executor="executor" proxy-target-class="true"/>
 	
+	<!-- 配置方式 -->
+
+	<task:scheduler id="scheduler" pool-size="10"/>
+	<!-- 或 -->
+   <bean id="scheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+	    <property name="poolSize" value="30" />
+	    <property name="errorHandler">
+	    	<!-- 错误处理，实现接口：org.springframework.util.ErrorHandler -->
+	        <bean class="org.server.util.ScheduledTaskErrorHandler"/>
+	    </property>
+   </bean>
+   <!-- 不指定scheduler也可 -->
+   <task:scheduled-tasks scheduler="scheduler">
+	    <!-- 每秒执行一次jobService组件的test方法 -->
+	    <task:scheduled ref="jobService" method="test" cron="* * * * * ?" />
+   </task:scheduled-tasks>
+
 </beans>

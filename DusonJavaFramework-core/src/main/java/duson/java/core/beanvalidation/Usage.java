@@ -7,6 +7,9 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.constraints.Size;
 
+/* 
+	与Spring结合的方式
+*/
 public class Usage {
 	// 错误信息可用I18n文件
 	@Size(min=1, max=30, message="{items.name.length.error}", groups={AddGroup.class})

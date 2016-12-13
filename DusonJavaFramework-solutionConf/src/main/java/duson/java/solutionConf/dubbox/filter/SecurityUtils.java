@@ -23,6 +23,16 @@ public class SecurityUtils {
 		for (Map.Entry<String, Object> entry : paramList) {
 			paramStr += entry.getKey() + "=" + entry.getValue().toString();
 		}
+
+		/* 或
+		SortedMap<String, Object> smap = new TreeMap<String, Object>(params);
+        StringBuffer sb = new StringBuffer();
+        for (Map.Entry<String, Object> m : smap.entrySet()) {
+            sb.append(m.getKey()).append("=").append(m.getValue()).append("&");
+        }
+
+		String paramStr = sb.append("key=").append(secretKey).toString();
+		 */
 		
 		try {
 			URL u = new URL(url);

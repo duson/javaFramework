@@ -14,6 +14,10 @@ public class ExtendMapperProvider extends MapperTemplate {
 	// 构造Mapper Xml的格式
 	public String extendMethod(MappedStatement ms) {
 		final Class<?> entityClass = getEntityClass(ms);
-		return "";
+		String tableName = tableName(entityClass);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("{call 储存过程名()}");
+		return sql.toString();
 	}
 }

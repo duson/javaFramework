@@ -6,6 +6,7 @@ public class BytesWapper {
 	private final static String[] hexDigits = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
 	
 	/**
+	 * 实现1
 	 * 将字节数组转成十六进制的字段串
 	 */
 	public static String byte2HexString(byte buf[]) {
@@ -19,8 +20,27 @@ public class BytesWapper {
 		}
 		return sb.toString();
 	}
+
+	// 实现2
+	public static String toHexString(byte data[])
+    {
+        if(data == null)
+            return null;
+        StringBuilder r = new StringBuilder(data.length * 2);
+        byte arr$[] = data;
+        int len$ = arr$.length;
+        for(int i$ = 0; i$ < len$; i$++)
+        {
+            byte b = arr$[i$];
+            r.append(hexDigits[b >> 4 & 15]);
+            r.append(hexDigits[b & 15]);
+        }
+
+        return r.toString();
+    }
 	
 	/**
+	 * 实现3
 	 * 字节数组转成十六进制的字段串
 	 * Commons-Codec库的实现
 	 * @param buf

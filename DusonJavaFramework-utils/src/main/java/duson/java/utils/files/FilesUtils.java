@@ -123,6 +123,17 @@ public class FilesUtils {
                 e.printStackTrace();  
             }  
         }  
-    } 
+    }
+
+    public static String readString(String filePath) {
+    	InputStreamReader sr = new InputStreamReader(new FileInputStream("d://1.xml"));
+		BufferedReader br = new BufferedReader(sr);
+		StringBuilder sb = new StringBuilder();
+		String rec = null;
+		while ((rec = br.readLine()) != null) {
+			sb.append(rec);
+		}
+		System.out.println(sb.toString());
+    }
 	
 }
