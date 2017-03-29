@@ -26,11 +26,23 @@
     
    或者：
    Maven引入dubbo-2.5.3.jar，再添加：
+   <!-- 如果想用高版本zookeeper，要排除 -->
   	<dependency>
     	<groupId>com.github.sgroschupf</groupId>
     	<artifactId>zkclient</artifactId>
     	<version>0.1</version>
-    </dependency> 
+    </dependency>
+    <!-- 使用了Validate验证 -->
+    <dependency>
+        <groupId>javax.el</groupId>
+        <artifactId>javax.el-api</artifactId>
+        <version>3.0.1-b04</version>
+    </dependency>
+    <dependency>
+        <groupId>org.glassfish.web</groupId>
+        <artifactId>el-impl</artifactId>
+        <version>2.2.1-b05</version>
+    </dependency>
 	
 	<!-- 服务端完整依赖 -->
     加载本地dubbo-2.8.4.jar

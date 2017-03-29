@@ -13,6 +13,7 @@ import com.alibaba.fastjson.parser.deserializer.DateFormatDeserializer;
  * 使用：
    ParserConfig config = ParserConfig.getGlobalInstance();
    config.putDeserializer(Date.class, new FastJsonDateFormatDeserializerExt("yyyy_MM_dd"));
+   JSON.parseObject(json, Test.class, config, JSON.DEFAULT_PARSER_FEATURE, new Feature[0]); 
  *
  */
 public class FastJsonDateFormatDeserializerExt extends DateFormatDeserializer {

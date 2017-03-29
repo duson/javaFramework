@@ -28,8 +28,23 @@ public class DemoServiceImpl implements DemoService {
     return "Hello," + name;
   }
 
-   //Form Post方式：
-   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-   public void formPost(@Form DemoServiceImpl msg, @FormParam("systemId")Long systemId){}
+  //Form Post方式：
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  public void formPost(@Form DemoServiceImpl msg, @FormParam("systemId")Long systemId){}
 
+  // 上传文件
+  @POST
+  @Consumes(MediaType.MULTIPART_FORM_DATA +";charset=UTF-8")
+  public uploadFile(@MultipartForm UploadFileRequest uploadFileRequest){}
+
+}
+
+public class UploadFileRequest {
+  @FormParam("file")
+  @PartType("application/octet-stream")
+  private byte[] fileData;
+  
+  @FormParam("fileName")
+  @PartType("text/plain")
+  private String fileName; // 文件名称
 }

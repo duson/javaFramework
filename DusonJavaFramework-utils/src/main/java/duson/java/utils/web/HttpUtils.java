@@ -279,4 +279,21 @@ public class HttpUtils {
         return response;
     }
 
+    public postFile(url, File) {
+    	HttpClient client = HttpClients.createDefault();
+        HttpPost postRequest = new HttpPost (url) ;
+
+        HttpEntity entity = MultipartEntityBuilder.create()
+        	.addTextBody("fileName", file.getName())
+        	.addBinaryBody("file", file, org.apache.http.entity.ContentType.MULTIPART_FORM_DATA, file.getName())
+        	.build();
+        //FileBody fileBody = new FileBody(file, "application/octect-stream") ;
+
+        postRequest.setEntity(entity) ;
+        HttpResponse response = client.execute(postRequest) ;
+        if (response != null) {
+            System.out.println(response.getStatusLine().getStatusCode());
+        }
+    }
+
 }

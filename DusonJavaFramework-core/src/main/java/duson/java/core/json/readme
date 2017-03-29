@@ -1,0 +1,16 @@
+fastjson过滤字段属性
+
+PropertyFilter filter = new PropertyFilter() {  
+    //过滤不需要的字段  
+    public boolean apply(Object source, String name, Object value) {  
+        if("code".equals(name) || "shengid".equals(name)){  
+            return false;  
+        }  
+        return true;  
+    }  
+}; 
+
+或
+直接在里面写上需要的字段属性
+SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Object.class, "id", "townname");  
+JSONObject.toJSONString(object, filter);

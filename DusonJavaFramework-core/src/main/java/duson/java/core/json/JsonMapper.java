@@ -29,6 +29,20 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 /**
  * 简单封装Jackson，实现JSON String<->Java Object的Mapper.
  * 封装不同的输出风格, 使用不同的builder函数创建实例
+ *
+ 	配合Spring MVC使用：
+
+  	<!-- 启动 MVC注解 -->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+				<property name="objectMapper" ref="customObjectMapper" />
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<!-- 自定义的JSON ObjectMapper -->
+	<bean id="customObjectMapper" class="com.xxx.JsonMapper" />
  */
 public class JsonMapper extends ObjectMapper {
 

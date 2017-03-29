@@ -11,7 +11,10 @@ import org.codehaus.jackson.map.SerializerProvider;
 
 /**
  * 依赖：jackson-mapper-lgpl
- *
+	使用：
+ 	@JsonSerialize(using=CustomDateSerializer.class)  
+	public class EvalTargetVO
+	或在get方法
  */
 public class CustomDateSerializer extends JsonSerializer<Date> {
 

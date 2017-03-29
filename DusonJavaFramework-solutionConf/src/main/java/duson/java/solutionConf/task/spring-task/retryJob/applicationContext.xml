@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="  
+            http://www.springframework.org/schema/beans    
+            http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+            http://www.springframework.org/schema/context    
+            http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<!-- <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="initialSize" value="${jdbc.pool.init}" />
+		<property name="minIdle" value="${jdbc.pool.minIdle}" />
+		<property name="maxActive" value="${jdbc.pool.maxActive}" />
+		<property name="filters" value="stat" />
+		<property name="maxWait" value="60000" />
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+		<property name="validationQuery" value="SELECT 'x'" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+	</bean> -->
+
+   <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+   		<!-- 使用数据库保存任务信息，重启不丢失 -->
+        <!-- <property name="dataSource">    
+            <ref bean="dataSource"/>    
+        </property>
+        <property name="configLocation" value="classpath:quartz.properties" /> -->
+        <!-- Job类内可注入依赖 -->
+        <property name="jobFactory">
+            <bean class="jobs.AutowiringSpringBeanJobFactory"/>
+        </property>
+    </bean>
+    
+</beans>
