@@ -14,7 +14,9 @@ public class ApachePropertiesConf
 	private static PropertiesConfiguration config = null;
 
 	public ApachePropertiesConf(String resourcesPath) {
-		config = new PropertiesConfiguration(resourcesPath);
+		config.setEncoding("UTF-8");
+		config.load(resourcesPath);
+
 		config.setReloadingStrategy(new FileChangedReloadingStrategy());
 	}
 

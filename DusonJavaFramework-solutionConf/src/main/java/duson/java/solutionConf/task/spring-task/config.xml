@@ -15,16 +15,19 @@
     <task:annotation-driven scheduler="scheduler" executor="executor" proxy-target-class="true"/>
 	
 	<!-- 配置方式 -->
-
+	
+	<!-- 1.缓冲池 -->
 	<task:scheduler id="scheduler" pool-size="10"/>
 	<!-- 或 -->
-   <bean id="scheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+    <bean id="scheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
 	    <property name="poolSize" value="30" />
 	    <property name="errorHandler">
 	    	<!-- 错误处理，实现接口：org.springframework.util.ErrorHandler -->
 	        <bean class="org.server.util.ScheduledTaskErrorHandler"/>
 	    </property>
    </bean>
+
+	<!-- 2.定义执行时间 -->
    <!-- 不指定scheduler也可 -->
    <task:scheduled-tasks scheduler="scheduler">
 	    <!-- 每秒执行一次jobService组件的test方法 -->

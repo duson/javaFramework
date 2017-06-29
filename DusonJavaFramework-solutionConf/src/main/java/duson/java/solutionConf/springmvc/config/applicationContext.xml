@@ -103,7 +103,7 @@
     </tx:advice>
      <!-- Spring Aop Config -->  
     <aop:config>  
-        <aop:pointcut id="pointcut" expression="execution(* com.cnit.pubds..*Impl.*(..))" />
+        <aop:pointcut id="pointcut" expression="(execution (* com.xxx.xxx.service..*Impl.*(..))) or (execution (* com.xxx.xxx.service..*Impl.*(..)))" />
         <aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut" />
         
         <!-- 通过AOP切面实现读/写库选择 -->  

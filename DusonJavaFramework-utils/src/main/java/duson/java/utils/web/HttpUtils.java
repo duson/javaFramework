@@ -23,6 +23,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+/**
+ * 依赖：httpmime（org.apache.httpcomponents）
+ */
 public class HttpUtils {
 	
 	public static String get(String url, String params) throws IOException {
@@ -285,6 +288,7 @@ public class HttpUtils {
 
         HttpEntity entity = MultipartEntityBuilder.create()
         	.addTextBody("fileName", file.getName())
+            //.addPart("file", new InputStreamBody(inputStream, fileName))
         	.addBinaryBody("file", file, org.apache.http.entity.ContentType.MULTIPART_FORM_DATA, file.getName())
         	.build();
         //FileBody fileBody = new FileBody(file, "application/octect-stream") ;
@@ -294,6 +298,49 @@ public class HttpUtils {
         if (response != null) {
             System.out.println(response.getStatusLine().getStatusCode());
         }
+    }
+
+    public static String postFile(String urlString, InputStream inputStream, String fileName, Map<String, Object> params) {        
+        CloseableHttpClient client = HttpClients.createSystem();
+        HttpPost postRequest = new HttpPost (urlString) ;
+
+        MultipartEntityBuilder entityBuild = MultipartEntityBuilder.create()
+                .addPart("file", new InputStreamBody(inputStream, fileName));
+        
+        for (Map.Entry<String, Object> item : params.entrySet()) {
+            if(item.getValue() instanceof String)
+                entityBuild.addTextBody(item.getKey(), item.getValue().toString());
+        }
+        HttpEntity entity = entityBuild.build();
+        postRequest.setEntity(entity) ;
+        CloseableHttpResponse response = null;
+        try {
+            response = client.execute(postRequest);
+        } catch (UnsupportedEncodingException e) {
+            logger.error("请求数据编码错误:", e);
+        } catch (ClientProtocolException e) {
+            logger.error("协议异常:", e);
+        } catch (IOException e) {
+            logger.error("http协议连接超时:", e);
+        } finally {
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    logger.error("关闭数据流异常:", e);
+                }
+            }
+        }
+        
+        if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            try {
+                return EntityUtils.toString(response.getEntity(), "UTF-8");
+            } catch (ParseException | IOException e) {
+                logger.error("请求数据解析异常:", e);
+            }
+        }
+
+        return null;
     }
 
 }

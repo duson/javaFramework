@@ -16,9 +16,16 @@
     <context:component-scan base-package="com" />
     <context:property-placeholder location="classpath*:**/application.properties" />
     
+    <bean id="elasticJobLog" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${event.rdb.driver}"/>
+        <property name="url" value="${event.rdb.url}"/>
+        <property name="username" value="${event.rdb.username}"/>
+        <property name="password" value="${event.rdb.password}"/>
+    </bean>
+
     <reg:zookeeper id="regCenter" server-lists="${serverLists}" namespace="${namespace}" base-sleep-time-milliseconds="${baseSleepTimeMilliseconds}" max-sleep-time-milliseconds="${maxSleepTimeMilliseconds}" max-retries="${maxRetries}" />
     
-    <job:simple id="${job.bill.id}" class="${job.bill.class}" registry-center-ref="regCenter" sharding-total-count="${job.bill.shardingTotalCount}" cron="${job.bill.cron}" failover="${job.bill.failover}" description="${job.bill.description}" disabled="${job.bill.disabled}">
+    <job:simple id="${job.bill.id}" class="${job.bill.class}" registry-center-ref="regCenter" sharding-total-count="${job.bill.shardingTotalCount}" cron="${job.bill.cron}" failover="${job.bill.failover}" description="${job.bill.description}" disabled="${job.bill.disabled}" event-trace-rdb-data-source="elasticJobLog">
     </job:simple>
     
 </beans>

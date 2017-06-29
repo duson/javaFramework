@@ -43,6 +43,14 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
 	<!-- 自定义的JSON ObjectMapper -->
 	<bean id="customObjectMapper" class="com.xxx.JsonMapper" />
+
+	如果使用RestEasy
+	<bean id="jacksonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
+		<constructor-arg ref="customObjectMapper" />
+	</bean>
+
+	属性为NULL 不序列化 
+	@JsonInclude(Include.NON_NULL) 
  */
 public class JsonMapper extends ObjectMapper {
 
@@ -59,6 +67,9 @@ public class JsonMapper extends ObjectMapper {
 		if (include != null) {
 			this.setSerializationInclusion(include);
 		}
+
+		this.setSerializationInclusion(Include.NON_NULL);  // 属性为NULL 不序列化
+
 		// 允许单引号、允许不带引号的字段名称
 		this.enableSimple();
 		// 设置输入时忽略在JSON字符串中存在但Java对象实际没有的属性
