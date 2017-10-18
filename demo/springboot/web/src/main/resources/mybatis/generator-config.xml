@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+	<properties resource="application.properties" />
+	<context id="MysqlContext" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+		<!-- 生成的Java文件的编码 -->
+		<property name="javaFileEncoding" value="UTF-8" />
+		<property name="beginningDelimiter" value="`" />
+		<property name="endingDelimiter" value="`" />
+		<property name="useActualColumnNames" value="true" />
+		<plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+			<!-- <property name="mappers" value="tk.mybatis.mapper.common.Mapper" /> -->
+			<property name="mappers" value="com.facewnd.core.mybatismapper.BaseMapper" />
+			<!-- caseSensitive默认false，当数据库表名区分大小写时，可以将该属性设置为true -->
+			<property name="caseSensitive" value="true" />
+		</plugin>
+		<commentGenerator>
+			<property name="suppressDate" value="true" />
+		</commentGenerator>
+		
+		<jdbcConnection driverClass="${spring.datasource.driver-class-name}" connectionURL="${spring.datasource.url}" userId="${spring.datasource.username}" password="${spring.datasource.password}">
+		</jdbcConnection>
+		
+		<javaModelGenerator targetPackage="com.facewnd.ad.modules.test.entity" targetProject="src/main/java">
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+		<sqlMapGenerator targetPackage="mybatis-mapper/test" targetProject="src/main/resources" />
+		<javaClientGenerator targetPackage="com.facewnd.ad.modules.test.dao" targetProject="src/main/java" type="XMLMAPPER" />
+		
+		<!-- 每次执行生成同一模块（包下）下表 -->
+		
+		<table tableName="users" domainObjectName="Users"> 
+			<property name="useActualColumnNames" value="true" /> 
+			<generatedKey column="id" sqlStatement="Mysql" identity="false"/>
+		</table>
+
+	</context>
+</generatorConfiguration>

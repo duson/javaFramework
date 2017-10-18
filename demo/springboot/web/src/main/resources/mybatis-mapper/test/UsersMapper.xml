@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.test.dao.UsersMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.test.entity.Users">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="NAME" />
+    <result column="age" jdbcType="DOUBLE" property="age" />
+    <result column="CreatedBy" jdbcType="TIMESTAMP" property="createdBy" />
+  </resultMap>
+</mapper>

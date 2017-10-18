@@ -151,7 +151,12 @@ public class HttpUtils {
     }
 	
 	public void post() throws ClientProtocolException, IOException {
-		HttpClient client = new DefaultHttpClient();
+		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        connectionManager.setMaxTotal(200);
+        connectionManager.setDefaultMaxPerRoute(100);
+        HttpClient client = HttpClients.custom()
+                .setConnectionManager(connectionManager)
+                .build();
         // client = (DefaultHttpClient) HttpClientConnectionManager.getSSLInstance(httpclient);
         client.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
 
@@ -286,8 +291,9 @@ public class HttpUtils {
     	HttpClient client = HttpClients.createDefault();
         HttpPost postRequest = new HttpPost (url) ;
 
+        ContentType contentType = ContentType.create("text/plain", Charset.forName("UTF-8"));
         HttpEntity entity = MultipartEntityBuilder.create()
-        	.addTextBody("fileName", file.getName())
+        	.addTextBody("fileName", file.getName(), contentType)
             //.addPart("file", new InputStreamBody(inputStream, fileName))
         	.addBinaryBody("file", file, org.apache.http.entity.ContentType.MULTIPART_FORM_DATA, file.getName())
         	.build();
@@ -307,9 +313,10 @@ public class HttpUtils {
         MultipartEntityBuilder entityBuild = MultipartEntityBuilder.create()
                 .addPart("file", new InputStreamBody(inputStream, fileName));
         
+        ContentType contentType = ContentType.create("text/plain", Charset.forName("UTF-8"));
         for (Map.Entry<String, Object> item : params.entrySet()) {
             if(item.getValue() instanceof String)
-                entityBuild.addTextBody(item.getKey(), item.getValue().toString());
+                entityBuild.addTextBody(item.getKey(), item.getValue().toString(), contentType);
         }
         HttpEntity entity = entityBuild.build();
         postRequest.setEntity(entity) ;
