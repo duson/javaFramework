@@ -29,3 +29,10 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+Springboot配置文件
+
+spring.data.elasticsearch.cluster-name=elasticsearch
+spring.data.elasticsearch.cluster-nodes=192.168.1.234:9300
+spring.data.elasticsearch.local=true
+spring.data.elasticsearch.repositories.enabled=true

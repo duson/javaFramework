@@ -30,24 +30,44 @@ public class IndexCreator {
                 .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("127.0.0.1"), 9300));
 		
 		ElasticsearchTemplate elasticsearchTemplate = new ElasticsearchTemplate(client);
-				
-		 SearchQuery searchQuery = new NativeSearchQueryBuilder()
-			        .withQuery(QueryBuilders.matchAllQuery())
-			        .build();
-		 Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
+
+		BoolQueryBuilder query = QueryBuilders.boolQuery();
+		
+		if(filter.getHotelId() != null)
+			query.filter(QueryBuilders.termQuery("hotelId", filter.getHotelId()));
+		if(filter.getSceneIds() != null)
+			query.filter(QueryBuilders.termsQuery("sceneId", filter.getSceneIds()));
+		if(StringUtils.isNotBlank(filter.getQuestion()))
+			query.must(QueryBuilders.matchQuery("question", filter.getQuestion()));
+		
+		SearchQuery searchQuery = new NativeSearchQueryBuilder().withMinScore((float) 0.1).withQuery(query)
+				.withSort(SortBuilders.scoreSort().order(SortOrder.DESC)).build();
+		logger.debug("DSL" + searchQuery.getQuery().toString());
+		List<ESModel> list = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<List<ESModel>>() {
 
 			@Override
-			public Aggregations extract(SearchResponse response) {
-				/*SearchHits searchHits = response.getHits();
-		        System.out.println("共搜到:"+searchHits.getTotalHits()+"条结果!");
+			public List<ESModel> extract(SearchResponse response) {
+				List<ESModel> result = Lists.newArrayList();
+				
+				EntityMapper entityMapper = new DefaultEntityMapper();
+				
+				SearchHits searchHits = response.getHits();
+				logger.debug("共搜到:" + searchHits.getTotalHits() + "条结果");
 		        //遍历结果
-		        for(SearchHit hit:searchHits){
-		            System.out.println("String方式打印文档搜索内容:");
-		            System.out.println(hit.getSourceAsString());
-		            System.out.println("Map方式打印高亮内容");
-		            System.out.println(hit.getHighlightFields());
-		        }*/
-				return response.getAggregations();
+		        ESModel idx;
+		        for(SearchHit hit : searchHits){
+		        	String sourceAsString = hit.getSourceAsString();
+		        	if (StringUtils.isNotBlank(sourceAsString)) {
+						try {
+							idx = entityMapper.mapToObject(sourceAsString, ESModel.class);
+							idx.setScore(hit.getScore());
+						} catch (IOException e) {
+							throw new ElasticsearchException("failed to map source [ " + sourceAsString + "] to class " + ESModel.class.getSimpleName(), e);
+						}
+						result.add(idx);
+					}
+		        }
+				return result;
 			}
 			
 		});
