@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.admaker.classify.dao.AdClassifyMapMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.admaker.classify.entity.AdClassifyMap">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ClassifyId" jdbcType="BIGINT" property="classifyId" />
+    <id column="ClassifyValId" jdbcType="BIGINT" property="classifyValId" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+  </resultMap>
+	<delete id="deleteClassifyByValId" parameterType="com.facewnd.ad.modules.admaker.classify.model.AdClassifyMapMODIFY">
+		DELETE a
+		  FROM ad_classify_map a
+		 WHERE a.classifyValId IN
+	       <foreach item="item" index="index" collection="classifyValId" open="(" separator="," close=")">
+		   	   #{item}
+		   </foreach>
+	       AND EXISTS(SELECT 1 FROM ad_classify b WHERE a.classifyId=b.classifyId AND b.classifyType=#{classifyType})
+	</delete>
+	<insert id="inserts" parameterType="com.facewnd.ad.modules.admaker.classify.model.AdClassifyMapMODIFY">
+		INSERT INTO ad_classify_map(
+			   classifyId  
+              ,classifyValId      
+			  ,createdUserId,createdDtm
+		) VALUES
+		<foreach collection="classifyValId" item="item" index="index" separator=",">
+			(
+			   #{classifyId}    
+              ,#{item}
+			  ,#{optUserId},#{optDtm}
+			)
+		</foreach>
+		ON DUPLICATE KEY UPDATE 
+		   createdUserId=VALUES(createdUserId),createdDtm=VALUES(createdDtm)
+	</insert>
+</mapper>

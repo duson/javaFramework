@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.device.dao.LicenseMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.device.entity.License">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="LicenseId" jdbcType="BIGINT" property="licenseId" />
+    <result column="CompanyId" jdbcType="BIGINT" property="companyId" />
+    <result column="ApplyId" jdbcType="BIGINT" property="applyId" />
+    <result column="DeviceId" jdbcType="BIGINT" property="deviceId" />
+    <result column="LicenseCode" jdbcType="VARCHAR" property="licenseCode" />
+    <result column="LicenseDay" jdbcType="INTEGER" property="licenseDay" />
+    <result column="BindDtm" jdbcType="TIMESTAMP" property="bindDtm" />
+    <result column="ExpiredDtm" jdbcType="DATE" property="expiredDtm" />
+    <result column="UnbindLimit" jdbcType="INTEGER" property="unbindLimit" />
+    <result column="UnbindDtm" jdbcType="TIMESTAMP" property="unbindDtm" />
+    <result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="LastUserId" jdbcType="BIGINT" property="lastUserId" />
+    <result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+  </resultMap>
+  
+  <sql id="findList_Column_List" >
+    a.LicenseId as licenseId, a.CompanyId as companyId, a.LicenseCode as licenseCode,
+    a.DeviceId as deviceId,a.ApplyId as applyId, a.BindDtm as bindDtm, a.LicenseDay as licenseDay, 
+    a.ExpiredDtm as expiredDtm, a.UnbindLimit as unbindLimit, a.UnbindDtm as unbindDtm,
+    a.DeleteFlag deleteFlag, a.Comments as comments, a.LastUserId as lastUserId,
+    a.LastDtm as lastDtm,ss.companyName as companyName
+  </sql>
+  
+  <select id="getLicenseList" resultType="com.facewnd.ad.modules.device.model.LicenseDTO">
+		SELECT
+			<include refid="findList_Column_List"/>,b.deviceName as deviceName,
+			(CASE
+			         WHEN <![CDATA[a.deviceId > 0 and a.licenseDay = 0 and DATE_FORMAT(a.expiredDtm, '%Y-%m-%d') >=  DATE_FORMAT(NOW(), '%Y-%m-%d')]]> THEN '1' 
+			         WHEN a.licenseDay > 0   THEN '0'
+			         WHEN <![CDATA[a.deviceId > 0 and (DATE_FORMAT(a.expiredDtm, '%Y-%m-%d') <  DATE_FORMAT(NOW(), '%Y-%m-%d') and a.licenseDay <= 0)]]> THEN '2'
+			         WHEN a.licenseDay = 0 and a.deviceId = 0  THEN '3'
+			         ELSE '0'
+		        END
+		     ) AS "statusCode"		
+		FROM ad_license a left join ad_device b on a.deviceId = b.deviceId
+			left join ad_company ss on a.companyId = ss.companyId
+		WHERE a.DeleteFlag = 0 
+			<if test="companyId != null and companyId !=''" >
+	        	and a.companyId = #{companyId}
+	       </if>
+		   <if test="licenseCode != null and licenseCode !=''" >
+	        	and a.licenseCode like CONCAT('%',#{licenseCode},'%')
+	       </if>
+	       <if test="deviceId != null" >
+	        	and a.deviceId = #{deviceId}
+	       </if>	
+	       <if test="applyId != null" >
+	        	and a.applyId = #{applyId}
+	       </if>	
+	       <if test="removeLicenseId != null and removeLicenseId > 0" >
+	        	<![CDATA[and a.licenseId <> #{removeLicenseId}]]> 
+	       </if>		       
+ 	       <if test="statusCode != null and statusCode == 1" >
+	 	       <![CDATA[and a.deviceId > 0 and a.licenseDay = 0 and DATE_FORMAT(a.expiredDtm, '%Y-%m-%d') >=  DATE_FORMAT(NOW(), '%Y-%m-%d')]]>
+	       </if>
+ 	       <if test="statusCode != null and statusCode == 0" >
+	        	and a.licenseDay > 0  
+	       </if>
+ 	       <if test="statusCode != null and statusCode == 2" >
+	        	<![CDATA[and a.deviceId > 0 and (DATE_FORMAT(a.expiredDtm, '%Y-%m-%d') <  DATE_FORMAT(NOW(), '%Y-%m-%d') and a.licenseDay <= 0)]]>
+	       </if>
+	       <!-- 无效 -->
+	       <if test="statusCode != null and statusCode == 3" >
+	        	and a.licenseDay = 0  and a.deviceId = 0
+	       </if>	       
+	       	       
+	       <if test="companyName != null" >
+	        	and ss.companyName like CONCAT('%',#{companyName},'%')
+	       </if>
+		   <if test="expiredDtmStart!=null and expiredDtmStart!=''">
+			<![CDATA[
+				  and DATE_FORMAT(a.expiredDtm, '%Y-%m-%d') >=  DATE_FORMAT(#{expiredDtmStart}, '%Y-%m-%d')
+			]]>
+		   </if>
+		   <if test="expiredDtmEnd!=null and expiredDtmEnd!=''">
+			<![CDATA[
+				  and DATE_FORMAT(a.expiredDtm, '%Y-%m-%d') <=  DATE_FORMAT(#{expiredDtmEnd}, '%Y-%m-%d')
+			]]>   
+		   </if>           
+       		ORDER BY a.licenseId DESC
+  </select>  
+  
+</mapper>

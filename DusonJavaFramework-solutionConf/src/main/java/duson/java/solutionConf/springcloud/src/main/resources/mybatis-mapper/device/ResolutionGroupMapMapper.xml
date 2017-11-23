@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.device.dao.ResolutionGroupMapMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.device.entity.ResolutionGroupMap">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ResolutionId" jdbcType="BIGINT" property="resolutionId" />
+    <id column="GroupId" jdbcType="BIGINT" property="groupId" />
+    <result column="CompanyId" jdbcType="BIGINT" property="companyId" />
+    <result column="Resolution" jdbcType="VARCHAR" property="resolution" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+  </resultMap>
+  
+</mapper>

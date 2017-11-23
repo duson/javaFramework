@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.device.dao.DeviceGroupMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.device.entity.DeviceGroup">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="GroupId" jdbcType="BIGINT" property="groupId" />
+    <result column="CompanyId" jdbcType="BIGINT" property="companyId" />
+    <result column="Direction" jdbcType="SMALLINT" property="direction" />
+    <result column="IsDefault" jdbcType="SMALLINT" property="isDefault" />
+    <result column="GroupName" jdbcType="VARCHAR" property="groupName" />
+    <result column="DeviceNumb" jdbcType="INTEGER" property="deviceNumb" />
+    <result column="TemplateName" jdbcType="VARCHAR" property="templateName" />
+    <result column="TemplateJson" jdbcType="VARCHAR" property="templateJson" />
+    <result column="WorkDay" jdbcType="VARCHAR" property="workDay" />
+    <result column="WorkTime" jdbcType="VARCHAR" property="workTime" />
+    <result column="Volume" jdbcType="INTEGER" property="volume" />
+    <result column="MainArea" jdbcType="VARCHAR" property="mainArea" />
+    <result column="AreaA" jdbcType="BIGINT" property="areaA" />
+    <result column="AreaB" jdbcType="BIGINT" property="areaB" />
+    <result column="AreaC" jdbcType="BIGINT" property="areaC" />
+    <result column="ResolutionA" jdbcType="VARCHAR" property="resolutionA" />
+    <result column="ResolutionB" jdbcType="VARCHAR" property="resolutionB" />
+    <result column="ResolutionC" jdbcType="VARCHAR" property="resolutionC" />
+    <result column="BackupA" jdbcType="BIGINT" property="backupA" />
+    <result column="BackupB" jdbcType="BIGINT" property="backupB" />
+    <result column="BackupC" jdbcType="BIGINT" property="backupC" />
+    <result column="StatusCode" jdbcType="SMALLINT" property="statusCode" />
+    <result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="LastUserId" jdbcType="BIGINT" property="lastUserId" />
+    <result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+  </resultMap>
+  
+  <select id="getAuthorizeDeviceGroupPage" resultType="com.facewnd.ad.modules.device.model.group.DeviceGroupPageDTO">
+  	SELECT grp.GroupId,GroupName,Direction,IsDefault,DeviceNumb,TemplateName 
+	FROM ad_group grp INNER JOIN (
+		SELECT * FROM (
+			SELECT GroupId FROM ad_group WHERE CompanyId &lt;&gt; #{companyId} AND AreaA=#{companyId} AND DeleteFlag=0
+			UNION ALL
+			SELECT GroupId FROM ad_group WHERE CompanyId &lt;&gt; #{companyId} AND AreaB=#{companyId} AND DeleteFlag=0
+			UNION ALL
+			SELECT GroupId FROM ad_group WHERE CompanyId &lt;&gt; #{companyId} AND AreaC=#{companyId} AND DeleteFlag=0
+		) t GROUP BY GroupId
+	) tmp ON grp.GroupId=tmp.GroupId
+	<where>
+		<if test="direction != null">
+			Direction=#{direction}
+		</if>
+		<if test="keyword != null and keyword.length > 0">
+			GroupName LIKE #{keyword}
+		</if>
+	</where>
+  </select>
+  
+  <update id="updateGroupDeviceNum">
+  	UPDATE ad_group SET DeviceNumb = IF(DeviceNumb + #{num} &lt; 0, 0, DeviceNumb + #{num}) WHERE GroupId IN
+  	<foreach collection="groupIds" index="index" item="item" open="(" separator="," close=")"> 
+	    #{item} 
+    </foreach>
+    	AND DeleteFlag=0
+  </update>
+  
+  <update id="updateGroupDeviceNumByDevice">
+  	UPDATE ad_group grp INNER JOIN ad_device dev ON grp.GroupId = dev.GroupId
+	SET DeviceNumb = IF(DeviceNumb + #{num} &lt; 0, 0, DeviceNumb + #{num}) 
+	WHERE DeviceId IN
+	<foreach collection="deviceIds" index="index" item="item" open="(" separator="," close=")"> 
+	    #{item} 
+    </foreach>
+ 	AND dev.GroupId &gt; 0
+  </update>
+  
+  <select id="getAvailableDeviceGroupPageForRegion" resultType="com.facewnd.ad.modules.device.model.group.DeviceGroupForRegionDTO">
+  	SELECT grp.GroupId,GroupName,Direction,`area`,DeviceNumb,TemplateName FROM ad_group grp INNER JOIN (
+		SELECT GroupId, 'A' AS `area` FROM ad_group WHERE AreaA=#{companyId} AND ResolutionA = #{resolution} AND DeleteFlag=0
+		UNION ALL
+		SELECT GroupId, 'B' AS `area` FROM ad_group WHERE AreaB=#{companyId} AND ResolutionB = #{resolution} AND DeleteFlag=0
+		UNION ALL
+		SELECT GroupId, 'C' AS `area` FROM ad_group WHERE AreaC=#{companyId} AND ResolutionC = #{resolution} AND DeleteFlag=0
+		UNION ALL
+	
+		SELECT GroupId, 'A' AS `area` FROM ad_group WHERE CompanyId=#{companyId} AND AreaA=0 AND ResolutionA = #{resolution} AND DeleteFlag=0
+		UNION ALL
+		SELECT GroupId, 'B' AS `area` FROM ad_group WHERE CompanyId=#{companyId} AND AreaB=0 AND ResolutionB = #{resolution} AND DeleteFlag=0
+		UNION ALL
+		SELECT GroupId, 'C' AS `area` FROM ad_group WHERE CompanyId=#{companyId} AND AreaC=0 AND ResolutionC = #{resolution} AND DeleteFlag=0
+	) tmp ON grp.GroupId=tmp.GroupId
+	<where>
+		<if test="direction != null">
+			Direction=#{direction}
+		</if>
+		<if test="groupName != null and groupName.length > 0">
+			AND GroupName LIKE #{groupName}
+		</if>
+	</where>
+  </select>
+  
+  <select id="getAvailableResolution" resultType="java.lang.String">
+ 	SELECT resolution FROM (
+		SELECT ResolutionA AS resolution FROM ad_group WHERE AreaA=#{companyId} AND DeleteFlag=0
+		UNION ALL
+		SELECT ResolutionB AS resolution FROM ad_group WHERE AreaB=#{companyId} AND ResolutionB &lt;&gt; '0*0' AND DeleteFlag=0
+		UNION ALL
+		SELECT ResolutionC AS resolution FROM ad_group WHERE AreaC=#{companyId} AND ResolutionC &lt;&gt; '0*0' AND DeleteFlag=0
+		UNION ALL
+		
+		SELECT ResolutionA AS resolution FROM ad_group WHERE CompanyId=#{companyId} AND AreaA=0 AND DeleteFlag=0
+		UNION ALL
+		SELECT ResolutionB AS resolution FROM ad_group WHERE CompanyId=#{companyId} AND AreaB=0 AND ResolutionB &lt;&gt; '0*0' AND DeleteFlag=0
+		UNION ALL
+		SELECT ResolutionC AS resolution FROM ad_group WHERE CompanyId=#{companyId} AND AreaC=0 AND ResolutionC &lt;&gt; '0*0' AND DeleteFlag=0
+	) tmp GROUP BY resolution
+  </select>
+  
+</mapper>

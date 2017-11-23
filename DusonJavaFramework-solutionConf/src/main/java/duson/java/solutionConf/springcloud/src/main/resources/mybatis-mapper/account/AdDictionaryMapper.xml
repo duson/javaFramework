@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.base.account.dao.AdDictionaryMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.base.account.entity.AdDictionary">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="Id" jdbcType="BIGINT" property="id" />
+    <result column="ParentId" jdbcType="BIGINT" property="parentId" />
+    <result column="KeyCode" jdbcType="VARCHAR" property="keyCode" />
+    <result column="KeyName" jdbcType="VARCHAR" property="keyName" />
+    <result column="KeyValue" jdbcType="VARCHAR" property="keyValue" />
+    <result column="PKeyValue" jdbcType="VARCHAR" property="PKeyValue" />
+    <result column="KeyPath" jdbcType="VARCHAR" property="keyPath" />
+    <result column="SortIndex" jdbcType="INTEGER" property="sortIndex" />
+    <result column="ChildNumber" jdbcType="INTEGER" property="childNumber" />
+    <result column="StatusCode" jdbcType="SMALLINT" property="statusCode" />
+    <result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="LastUserId" jdbcType="BIGINT" property="lastUserId" />
+    <result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+    <result column="IntVal3" jdbcType="BIGINT" property="intVal3" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+  </resultMap>
+</mapper>

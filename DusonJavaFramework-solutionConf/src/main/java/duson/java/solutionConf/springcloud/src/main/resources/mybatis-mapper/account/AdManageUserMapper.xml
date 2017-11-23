@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.base.account.dao.AdManageUserMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.base.account.entity.AdManageUser">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="MuserId" jdbcType="BIGINT" property="muserId" />
+    <result column="UserAlias" jdbcType="VARCHAR" property="userAlias" />
+    <result column="Password1" jdbcType="VARCHAR" property="password1" />
+    <result column="Password2" jdbcType="VARCHAR" property="password2" />
+    <result column="RealName" jdbcType="VARCHAR" property="realName" />
+    <result column="LoginNumb" jdbcType="INTEGER" property="loginNumb" />
+    <result column="LoginDtm" jdbcType="TIMESTAMP" property="loginDtm" />
+    <result column="ErrorLoginNumb" jdbcType="INTEGER" property="errorLoginNumb" />
+    <result column="ErrorLoginDtm" jdbcType="TIMESTAMP" property="errorLoginDtm" />
+    <result column="StatusCode" jdbcType="SMALLINT" property="statusCode" />
+    <result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="LastUserId" jdbcType="BIGINT" property="lastUserId" />
+    <result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+  </resultMap>
+</mapper>

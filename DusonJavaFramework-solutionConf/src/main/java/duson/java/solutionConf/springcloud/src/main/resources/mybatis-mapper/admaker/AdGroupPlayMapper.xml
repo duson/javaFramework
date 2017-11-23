@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.admaker.program.dao.AdGroupPlayMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.admaker.program.entity.AdGroupPlay">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="PlayId" jdbcType="BIGINT" property="playId" />
+    <result column="PlayType" jdbcType="VARCHAR" property="playType" />
+    <result column="GroupId" jdbcType="BIGINT" property="groupId" />
+    <result column="Area" jdbcType="VARCHAR" property="area" />
+    <result column="BeginDay" jdbcType="DATE" property="beginDay" />
+    <result column="EndDay" jdbcType="DATE" property="endDay" />
+    <result column="ListId" jdbcType="BIGINT" property="listId" />
+    <result column="CompanyId" jdbcType="BIGINT" property="companyId" />
+    <result column="RegionId" jdbcType="BIGINT" property="regionId" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+  </resultMap>
+  	<insert id="inserts" parameterType="com.facewnd.ad.modules.admaker.program.entity.AdGroupPlay">
+		INSERT INTO ad_group_play(
+			   playId,playType,groupId
+			  ,area,beginDay,endDay
+			  ,listId,companyId,regionId
+			  ,createdUserId,createdDtm
+		) VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+			   #{item.playId},#{item.playType},#{item.groupId}
+			  ,#{item.area},#{item.beginDay},#{item.endDay}
+			  ,#{item.listId},#{item.companyId},#{item.regionId}
+			  ,#{item.createdUserId},#{item.createdDtm}
+			)
+		</foreach>
+	</insert>
+	<select id="getPlayDayListOfIssueRecordCount" parameterType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRecordQUERY"
+	                              resultType="java.lang.Integer">
+		SELECT COUNT(DISTINCT a.beginDay,a.endDay,a.playType,a.createdDtm)
+		  FROM ad_group_play a
+		   <if test="marketName !=null and marketName.toString() !=''">
+		 INNER JOIN ad_region c
+		   	ON a.regionId=c.regionId
+		   AND c.marketName LIKE CONCAT('%',#{marketName},'%')
+		  </if><!-- 片区查询 -->
+		   <if test="groupName !=null and groupName.toString() !=''">
+		 INNER JOIN ad_group d
+		   	ON a.groupId=d.groupId
+		   AND d.groupName LIKE CONCAT('%',#{groupName},'%')
+		   </if><!-- 终端组查询 -->
+		<where>
+		       a.listId = #{listId}
+		       <choose>
+			   	<when test="playDay_sd !=null and playDay_sd.toString() !='' and playDay_ed !=null and playDay_ed.toString() !=''">
+		   AND (a.beginDay &lt;= #{playDay_ed} AND a.endDay >=#{playDay_sd})
+			   	</when>
+			   	<when test="playDay_sd !=null and playDay_sd.toString() !=''">
+		   AND a.endDay >= #{playDay_sd}
+			   	</when>
+			   	<when test="playDay_ed !=null and playDay_ed.toString() !=''">
+		   AND a.beginDay &lt;= #{playDay_ed}
+			   	</when>
+			   </choose>
+		   <if test="area !=null and area.toString() !=''">
+		   AND a.area LIKE CONCAT('%',#{area},'%')
+		   </if>
+		</where>
+	</select>
+	<select id="getPlayDayListOfIssueRecord" parameterType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRecordQUERY"
+	                              resultType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRecordDayBO">
+		SELECT DISTINCT a.beginDay,a.endDay,a.playType,a.createdDtm
+		  FROM ad_group_play a
+		   <if test="marketName !=null and marketName.toString() !=''">
+		 INNER JOIN ad_region c
+		   	ON a.regionId=c.regionId
+		   AND c.marketName LIKE CONCAT('%',#{marketName},'%')
+		  </if><!-- 片区查询 -->
+		   <if test="groupName !=null and groupName.toString() !=''">
+		 INNER JOIN ad_group d
+		   	ON a.groupId=d.groupId
+		   AND d.groupName LIKE CONCAT('%',#{groupName},'%')
+		   </if><!-- 终端组查询 -->
+		<where>
+		       a.listId = #{listId}
+		       <choose>
+			   	<when test="playDay_sd !=null and playDay_sd.toString() !='' and playDay_ed !=null and playDay_ed.toString() !=''">
+		   AND (a.beginDay &lt;= #{playDay_ed} AND a.endDay >=#{playDay_sd})
+			   	</when>
+			   	<when test="playDay_sd !=null and playDay_sd.toString() !=''">
+		   AND a.endDay >= #{playDay_sd}
+			   	</when>
+			   	<when test="playDay_ed !=null and playDay_ed.toString() !=''">
+		   AND a.beginDay &lt;= #{playDay_ed}
+			   	</when>
+			   </choose>
+		   <if test="area !=null and area.toString() !=''">
+		   AND a.area LIKE CONCAT('%',#{area},'%')
+		   </if>
+		</where>
+		 ORDER BY a.beginDay DESC,a.createdDtm DESC
+		 LIMIT #{firstRecord},#{pageSize}
+	</select>
+	<select id="getGroupListOfPlayDayCount" parameterType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRecordQUERY"
+	                              resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		  FROM ad_group_play a
+		   <if test="marketName !=null and marketName.toString() !=''">
+		 INNER JOIN ad_region c
+		   	ON a.regionId=c.regionId
+		   AND c.marketName LIKE CONCAT('%',#{marketName},'%')
+		  </if><!-- 片区查询 -->
+		   <if test="groupName !=null and groupName.toString() !=''">
+		 INNER JOIN ad_group d
+		   	ON a.groupId=d.groupId
+		   AND d.groupName LIKE CONCAT('%',#{groupName},'%')
+		   </if><!-- 终端组查询 -->
+		<where>
+		       a.listId = #{listId}
+		   AND a.beginDay=#{beginDay}
+		   AND a.endDay=#{endDay}
+		   AND a.createdDtm=#{createdDtm}
+		   <if test="area !=null and area.toString() !=''">
+		   AND a.area LIKE CONCAT('%',#{area},'%')
+		   </if>
+		</where>
+	</select>
+	<select id="getGroupListOfPlayDay" parameterType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRecordQUERY"
+	                              resultType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRecordGroupBO">
+	    SELECT t.*
+		   <if test="marketName ==null or marketName.toString() ==''">
+		   	  ,t2.marketName
+		   </if>
+		   <if test="groupName ==null or groupName.toString() ==''">
+		   	  ,t3.groupName
+		   	  ,t3.companyId
+		   </if>
+		      ,t4.companyName
+	      FROM (
+	      		SELECT a.playId,a.playType,a.area
+				      ,a.beginDay,a.endDay,a.createdDtm
+				      ,a.regionId,a.groupId
+				      <if test="marketName !=null and marketName.toString() !=''">
+				      ,c.marketName
+				      </if>
+				      <if test="groupName !=null and groupName.toString() !=''">
+				      ,d.groupName
+				      ,d.companyId
+				      </if>
+				  FROM ad_group_play a
+				   <if test="marketName !=null and marketName.toString() !=''">
+				 INNER JOIN ad_region c
+				   	ON a.regionId=c.regionId
+				   AND c.marketName LIKE CONCAT('%',#{marketName},'%')
+				  </if><!-- 片区查询 -->
+				   <if test="groupName !=null and groupName.toString() !=''">
+				 INNER JOIN ad_group d
+				   	ON a.groupId=d.groupId
+				   AND d.groupName LIKE CONCAT('%',#{groupName},'%')
+				   </if><!-- 终端组查询 -->
+				<where>
+				       a.listId = #{listId}
+				   AND a.beginDay=#{beginDay}
+				   AND a.endDay=#{endDay}
+		           AND a.createdDtm=#{createdDtm}
+				   <if test="area !=null and area.toString() !=''">
+				   AND a.area LIKE CONCAT('%',#{area},'%')
+				   </if>
+				</where>
+				 ORDER BY a.playId DESC
+				 LIMIT #{firstRecord},#{pageSize}
+	         ) t
+		   <if test="marketName ==null or marketName.toString() ==''">
+		  LEFT JOIN ad_region t2
+		   	ON t.regionId=t2.regionId
+		  </if><!-- 片区查询 -->
+		  <choose>
+		  	<when test="groupName ==null or groupName.toString() ==''">
+		 INNER JOIN ad_group t3
+		   	ON t.groupId=t3.groupId
+		 INNER JOIN ad_company t4
+		   	ON t3.companyId=t4.companyId
+		  	</when>
+		  	<otherwise>
+		 INNER JOIN ad_company t4
+		   	ON t.companyId=t4.companyId
+		  	</otherwise>
+		  </choose>
+	</select>
+	<select id="getRegionListOfPlayDayCount" parameterType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRecordQUERY"
+	                              resultType="java.lang.Integer">
+		SELECT COUNT( DISTINCT a.playId,a.playType,a.area
+				      ,a.beginDay,a.endDay,a.createdDtm
+				      ,a.regionId)
+		  FROM ad_group_play a
+		   <if test="marketName !=null and marketName.toString() !=''">
+		 INNER JOIN ad_region c
+		   	ON a.regionId=c.regionId
+		   AND c.marketName LIKE CONCAT('%',#{marketName},'%')
+		  </if><!-- 片区查询 -->
+		<where>
+		       a.listId = #{listId}
+		   AND a.beginDay=#{beginDay}
+		   AND a.endDay=#{endDay}
+		   AND a.createdDtm=#{createdDtm}
+		   <if test="area !=null and area.toString() !=''">
+		   AND a.area LIKE CONCAT('%',#{area},'%')
+		   </if>
+		</where>
+	</select>
+	<select id="getRegionListOfPlayDay" parameterType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRecordQUERY"
+	                              resultType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRecordRegionBO">
+	    SELECT t.*
+		   <if test="marketName ==null or marketName.toString() ==''">
+		   	  ,t2.marketName
+		   </if>
+	      FROM (
+	      		SELECT a.playType,a.area
+				      ,a.beginDay,a.endDay,a.createdDtm
+				      ,a.regionId,COUNT(*) as groupNumber
+				      <if test="marketName !=null and marketName.toString() !=''">
+				      ,MAX(c.marketName)
+				      </if>
+				  FROM ad_group_play a
+				   <if test="marketName !=null and marketName.toString() !=''">
+				 INNER JOIN ad_region c
+				   	ON a.regionId=c.regionId
+				   AND c.marketName LIKE CONCAT('%',#{marketName},'%')
+				  </if><!-- 片区查询 -->
+				<where>
+				       a.listId = #{listId}
+				   AND a.beginDay=#{beginDay}
+				   AND a.endDay=#{endDay}
+		           AND a.createdDtm=#{createdDtm}
+				   <if test="area !=null and area.toString() !=''">
+				   AND a.area LIKE CONCAT('%',#{area},'%')
+				   </if>
+				</where>
+				 GROUP BY a.playType,a.area,a.beginDay,a.endDay,a.createdDtm,a.regionId
+				 ORDER BY a.regionId DESC
+				 LIMIT #{firstRecord},#{pageSize}
+	         ) t
+		   <if test="marketName ==null or marketName.toString() ==''">
+		  LEFT JOIN ad_region t2
+		   	ON t.regionId=t2.regionId
+		  </if><!-- 片区查询 -->
+	</select>
+</mapper>

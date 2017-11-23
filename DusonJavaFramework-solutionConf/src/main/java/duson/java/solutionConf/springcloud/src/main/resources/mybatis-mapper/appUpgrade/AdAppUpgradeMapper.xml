@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.appUpgrade.dao.AdAppUpgradeMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.appUpgrade.entity.AdAppUpgrade">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="UpgradeId" jdbcType="BIGINT" property="upgradeId" />
+    <result column="AppType" jdbcType="SMALLINT" property="appType" />
+    <result column="OSType" jdbcType="SMALLINT" property="osType" />
+    <result column="AppName" jdbcType="VARCHAR" property="appName" />
+    <result column="AppVersion" jdbcType="VARCHAR" property="appVersion" />
+    <result column="DownloadUrl" jdbcType="VARCHAR" property="downloadUrl" />
+    <result column="IsMust" jdbcType="SMALLINT" property="isMust" />
+    <result column="Note" jdbcType="VARCHAR" property="note" />
+    <result column="StatusCode" jdbcType="SMALLINT" property="statusCode" />
+    <result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+  </resultMap>
+  <select id="findListCount" parameterType="com.facewnd.ad.modules.appUpgrade.model.AdAppUpgradeQUERY" 
+                             resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		  FROM ad_app_upgrade a
+		<where>1=1
+		  <if test="upgradeId != null">
+		   AND a.upgradeId = #{upgradeId}
+		  </if>
+		  <if test="appType != null">
+		   AND a.appType = #{appType}
+		  </if>
+		  <if test="osType != null">
+		   AND a.osType = #{osType}
+		  </if>
+		  <if test="appName != null and appName.toString() != ''">
+		   AND a.appName LIKE CONCAT('%',#{appName},'%')
+		  </if>
+		  <if test="appVersion != null and appVersion.toString() != ''">
+		   AND a.appVersion LIKE CONCAT('%',#{appVersion},'%')
+		  </if>
+		  <if test="downloadUrl != null and downloadUrl.toString() != ''">
+		   AND a.downloadUrl LIKE CONCAT('%',#{downloadUrl},'%')
+		  </if>
+		  <if test="note != null and note.toString() != ''">
+		   AND a.note LIKE CONCAT('%',#{note},'%')
+		  </if>
+		  <if test="isMust != null and isMust.toString() != ''">
+		   AND a.isMust=#{isMust}
+		  </if>
+		  <choose>
+		  	<when test="createdDtm_st != null and createdDtm_st.toString() != '' and createdDtm_et != null and createdDtm_et.toString() != ''">
+		   AND a.createdDtm BETWEEN #{createdDtm_st} AND #{createdDtm_et}
+		  	</when>
+          	<when test="createdDtm_et != null and createdDtm_et.toString() != ''">
+           AND a.createdDtm &lt;= #{createdDtm_et}
+         	</when>
+          	<when test="createdDtm_st != null and createdDtm_st.toString() != ''">
+           AND a.createdDtm >= #{createdDtm_st}
+          	</when>
+		  </choose>
+		  <choose>
+		 	<when test='deleteFlag !=null and deleteFlag.toString()=="1".toString()'>
+		     AND a.deleteFlag=1
+		 	</when>
+		 	<otherwise>
+		     AND a.deleteFlag=0
+		 	</otherwise>
+		 </choose>
+		  <if test="statusCode != null and statusCode.toString() != ''">
+		   AND a.statusCode = #{statusCode}
+		  </if>
+		</where>
+	</select>
+	<select id="findList" parameterType="com.facewnd.ad.modules.appUpgrade.model.AdAppUpgradeQUERY" 
+	                      resultType="com.facewnd.ad.modules.appUpgrade.model.AdAppUpgradeBO">
+		SELECT a.upgradeId
+		      ,a.appType
+		      ,a.osType
+		      ,a.appName
+		      ,a.appVersion
+		      ,a.downloadUrl
+		      ,a.isMust
+		      ,a.note
+		      ,a.statusCode
+		      ,a.createdDtm
+		      ,a.deleteFlag
+		  FROM ad_app_upgrade a
+		<where>1=1
+		  <if test="upgradeId != null">
+		   AND a.upgradeId = #{upgradeId}
+		  </if>
+		  <if test="appType != null">
+		   AND a.appType = #{appType}
+		  </if>
+		  <if test="osType != null">
+		   AND a.osType = #{osType}
+		  </if>
+		  <if test="appName != null and appName.toString() != ''">
+		   AND a.appName LIKE CONCAT('%',#{appName},'%')
+		  </if>
+		  <if test="appVersion != null and appVersion.toString() != ''">
+		   AND a.appVersion LIKE CONCAT('%',#{appVersion},'%')
+		  </if>
+		  <if test="downloadUrl != null and downloadUrl.toString() != ''">
+		   AND a.downloadUrl LIKE CONCAT('%',#{downloadUrl},'%')
+		  </if>
+		  <if test="note != null and note.toString() != ''">
+		   AND a.note LIKE CONCAT('%',#{note},'%')
+		  </if>
+		  <if test="isMust != null and isMust.toString() != ''">
+		   AND a.isMust=#{isMust}
+		  </if>
+		  <choose>
+		  	<when test="createdDtm_st != null and createdDtm_st.toString() != '' and createdDtm_et != null and createdDtm_et.toString() != ''">
+		   AND a.createdDtm BETWEEN #{createdDtm_st} AND #{createdDtm_et}
+		  	</when>
+          	<when test="createdDtm_et != null and createdDtm_et.toString() != ''">
+           AND a.createdDtm &lt;= #{createdDtm_et}
+         	</when>
+          	<when test="createdDtm_st != null and createdDtm_st.toString() != ''">
+           AND a.createdDtm >= #{createdDtm_st}
+          	</when>
+		  </choose>
+		  <choose>
+		 	<when test='deleteFlag !=null and deleteFlag.toString()=="1".toString()'>
+		     AND a.deleteFlag=1
+		 	</when>
+		 	<otherwise>
+		     AND a.deleteFlag=0
+		 	</otherwise>
+		 </choose>
+		  <if test="statusCode != null and statusCode.toString() != ''">
+		   AND a.statusCode = #{statusCode}
+		  </if>
+		</where>
+		<choose>
+			<when test="orderByKey !=null and orderByKey != ''">
+			ORDER BY ${orderByKey} ${orderByValue}
+			</when>
+			<otherwise>
+			ORDER BY upgradeId DESC
+			</otherwise>
+		</choose>
+		 LIMIT #{firstRecord},#{pageSize}
+	</select>
+	<update id="updateAppUpgrade" parameterType="com.facewnd.ad.modules.appUpgrade.model.AdAppUpgradeMODIFY">
+		UPDATE ad_app_upgrade
+		   SET CreatedUserId=CreatedUserId
+			  <if test="statusCode != null">
+			  ,statusCode = #{statusCode}
+			  </if>
+			  <if test="appType != null">
+			  ,appType = #{appType}
+			  </if>
+			  <if test="osType != null">
+			  ,osType = #{osType}
+			  </if>
+			  <if test="appName != null and appName.toString() != ''">
+			  ,appName = #{appName}
+			  </if>
+			  <if test="appVersion != null and appVersion.toString() != ''">
+			  ,appVersion = #{appVersion}
+			  </if>
+			  <if test="downloadUrl != null and downloadUrl.toString() != ''">
+			  ,downloadUrl = #{downloadUrl}
+			  </if>
+			  <if test="isMust != null">
+			  ,isMust = #{isMust}
+			  </if>
+			  <if test="note != null and note.toString() != ''">
+			  ,note = #{note}
+			  </if>
+		<where>
+		       upgradeId = #{upgradeId}
+		</where>
+	</update>
+	
+	<update id="deleteAppUpgrade" parameterType="com.facewnd.ad.modules.appUpgrade.model.AdAppUpgradeMODIFY">
+		UPDATE ad_app_upgrade 
+		   SET deleteFlag = 1
+		<where>
+		       upgradeId = #{upgradeId}
+		</where>
+	</update>
+</mapper>

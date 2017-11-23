@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.admaker.material.dao.AdMaterialMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.admaker.material.entity.AdMaterial">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="MaterialId" jdbcType="BIGINT" property="materialId" />
+    <result column="CompanyId" jdbcType="BIGINT" property="companyId" />
+    <result column="MaterialName" jdbcType="VARCHAR" property="materialName" />
+    <result column="MaterialType" jdbcType="SMALLINT" property="materialType" />
+    <result column="Md5" jdbcType="VARCHAR" property="md5" />
+    <result column="ConvertState" jdbcType="SMALLINT" property="convertState" />
+    <result column="FileSize" jdbcType="INTEGER" property="fileSize" />
+    <result column="Resolution" jdbcType="VARCHAR" property="resolution" />
+    <result column="PlayTime" jdbcType="INTEGER" property="playTime" />
+    <result column="PreViewMd5" jdbcType="VARCHAR" property="preViewMd5" />
+    <result column="PreViewImgMd5" jdbcType="VARCHAR" property="preViewImgMd5" />
+    <result column="UsageCounter" jdbcType="INTEGER" property="usageCounter" />
+    <result column="StatusCode" jdbcType="SMALLINT" property="statusCode" />
+    <result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="LastUserId" jdbcType="BIGINT" property="lastUserId" />
+    <result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+  </resultMap>
+	<select id="getMaterialByMd5" resultType="com.facewnd.ad.modules.admaker.material.entity.AdMaterial">
+		SELECT *
+		  FROM ad_material a
+		 WHERE a.companyId = #{companyId}
+           AND a.md5=#{md5}
+         LIMIT 1
+	</select>
+	<select id="getAdMaterialByName" parameterType="com.facewnd.ad.modules.admaker.material.model.AdMaterialQUERY"
+	                                 resultType="com.facewnd.ad.modules.admaker.material.model.AdMaterialBO">
+		SELECT *
+		  FROM ad_material a
+		 WHERE a.companyId = #{companyId}
+           AND a.materialName=#{materialName}
+           AND a.deleteFlag=0
+         LIMIT 1
+	</select>
+	<select id="getUnusedListByIds" resultType="java.lang.Long">
+		SELECT a.materialId
+		  FROM ad_material a
+		 WHERE a.materialId IN
+	       <foreach item="item" index="index" collection="materialIds" open="(" separator="," close=")">
+		   	   #{item}
+		   </foreach>
+		   AND a.usageCounter=0<!-- 未被使用 -->
+           AND a.deleteFlag=0
+	</select>
+	<select id="getMaterialListCount" parameterType="com.facewnd.ad.modules.admaker.material.model.AdMaterialQUERY"
+	                              resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		  FROM ad_material a
+		   <if test="null !=classifyId and classifyId!=0">
+		 INNER JOIN (SELECT x2.classifyId,x2.classifyValId
+		               FROM ad_classify x1
+		              INNER JOIN ad_classify_map x2
+		                 ON x1.classifyId=x2.classifyId
+		                AND (x1.classifyId=#{classifyId} OR x1.parentId=#{classifyId})
+		                AND x1.statusCode=0
+		                AND x1.deleteFlag=0
+		     ) b
+		    ON a.materialId=b.classifyValId
+		   </if>
+		 WHERE a.companyId = #{companyId}
+		   <if test="materialName !=null and materialName.toString() !=''">
+		   AND a.materialName LIKE CONCAT('%',#{materialName},'%')
+		   </if>
+           <if test="convertState !=null">
+           AND a.convertState=#{convertState}
+           </if>
+           <if test="materialType !=null">
+           AND a.materialType=#{materialType}
+           </if>
+           <if test="statusCode !=null">
+           AND a.statusCode=#{statusCode}
+           </if>
+           AND a.deleteFlag=0
+	</select>
+	<select id="getMaterialList" parameterType="com.facewnd.ad.modules.admaker.material.model.AdMaterialQUERY"
+	                              resultType="com.facewnd.ad.modules.admaker.material.model.AdMaterialBO">
+		SELECT a.materialId
+		      ,a.companyId
+		      ,a.materialName
+		      ,a.materialType
+		      ,a.md5
+		      ,a.convertState
+		      ,a.fileSize
+		      ,a.resolution
+		      ,a.playTime
+		      ,a.preViewMd5
+		      ,a.preViewImgMd5
+		      ,a.usageCounter
+		      ,a.statusCode
+		      ,a.createdDtm
+		      ,a.createdUserId
+		      ,a.lastDtm
+		      ,a.lastUserId
+		      ,a.strVal2 AS convertRet
+		   <if test="null !=classifyId and classifyId!=0">
+		      ,b.classifyId
+		   </if>
+		  FROM ad_material a
+		   <if test="null !=classifyId and classifyId!=0">
+		 INNER JOIN (SELECT x2.classifyId,x2.classifyValId
+		               FROM ad_classify x1
+		              INNER JOIN ad_classify_map x2
+		                 ON x1.classifyId=x2.classifyId
+		                AND (x1.classifyId=#{classifyId} OR x1.parentId=#{classifyId})
+		                AND x1.statusCode=0
+		                AND x1.deleteFlag=0
+		     ) b
+		    ON a.materialId=b.classifyValId
+		   </if>
+		 WHERE a.companyId = #{companyId}
+		   <if test="materialName !=null and materialName.toString() !=''">
+		   AND a.materialName LIKE CONCAT('%',#{materialName},'%')
+		   </if>
+           <if test="convertState !=null">
+           AND a.convertState=#{convertState}
+           </if>
+           <if test="materialType !=null">
+           AND a.materialType=#{materialType}
+           </if>
+           <if test="statusCode !=null">
+           AND a.statusCode=#{statusCode}
+           </if>
+           AND a.deleteFlag=0
+         ORDER BY a.materialId DESC
+		 LIMIT #{firstRecord},#{pageSize}
+	</select>
+	<select id="getUnCheckMaterialListCount" parameterType="com.facewnd.ad.modules.admaker.material.model.AdMaterialQUERY"
+	                              resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		  FROM ad_material a
+		 WHERE a.statusCode = 0
+		   <if test="materialName !=null and materialName.toString() !=''">
+		   AND a.materialName LIKE CONCAT('%',#{materialName},'%')
+		   </if>
+           <if test="convertState !=null">
+           AND a.convertState=#{convertState}
+           </if>
+           <if test="materialType !=null">
+           AND a.materialType=#{materialType}
+           </if>
+           AND a.deleteFlag=0
+	</select>
+	<select id="getUnCheckMaterialList" parameterType="com.facewnd.ad.modules.admaker.material.model.AdMaterialQUERY"
+	                              resultType="com.facewnd.ad.modules.admaker.material.model.AdMaterialBO">
+	    SELECT t.*
+	          ,t1.companyName
+	      FROM (                      
+				SELECT a.materialId
+				      ,a.companyId
+				      ,a.materialName
+				      ,a.materialType
+				      ,a.md5
+				      ,a.convertState
+				      ,a.fileSize
+				      ,a.resolution
+				      ,a.playTime
+				      ,a.preViewMd5
+				      ,a.preViewImgMd5
+				      ,a.usageCounter
+				      ,a.statusCode
+				      ,a.createdDtm
+				      ,a.createdUserId
+				      ,a.lastDtm
+				      ,a.lastUserId
+				      ,a.strVal2 AS convertRet
+				  FROM ad_material a
+				 WHERE a.statusCode = 0
+				   <if test="materialName !=null and materialName.toString() !=''">
+				   AND a.materialName LIKE CONCAT('%',#{materialName},'%')
+				   </if>
+		           <if test="convertState !=null">
+		           AND a.convertState=#{convertState}
+		           </if>
+		           <if test="materialType !=null">
+		           AND a.materialType=#{materialType}
+		           </if>
+		           AND a.deleteFlag=0
+		         ORDER BY a.materialId DESC
+				 LIMIT #{firstRecord},#{pageSize}
+	         ) t 
+		  LEFT JOIN ad_company t1
+		    ON t.companyId=t1.companyId
+	</select>
+	<update id="recoveryMaterial" parameterType="com.facewnd.ad.modules.admaker.material.entity.AdMaterial">
+		UPDATE ad_material a
+		   SET a.lastDtm  = #{lastDtm}
+		      ,a.lastUserId = #{lastUserId}
+		      ,a.deleteFlag = 0
+          <if test="materialName !=null and materialName.toString() !=''">
+             ,a.materialName=#{materialName}
+          </if>
+          <if test="convertState !=null">
+             ,a.convertState=#{convertState}
+          </if>
+          <if test="statusCode !=null">
+             ,a.statusCode=#{statusCode}
+          </if>
+	     WHERE materialId=#{materialId}
+	       AND deleteFlag=1
+	</update>
+	<update id="modifyMaterial" parameterType="com.facewnd.ad.modules.admaker.material.model.AdMaterialMODIFY">
+		UPDATE ad_material a
+		   SET a.lastDtm  = #{optDtm}
+		      ,a.lastUserId = #{optUserId}
+          <if test="materialName !=null and materialName.toString() !=''">
+             ,a.materialName=#{materialName}
+          </if>
+          <if test="convertState !=null">
+             ,a.convertState=#{convertState}
+          </if>
+          <if test="statusCode !=null">
+             ,a.statusCode=#{statusCode}
+          </if>
+          <if test="intVal2 !=null">
+             ,a.intVal2=#{intVal2}
+          </if>
+          <if test="playTime !=null">
+             ,a.playTime=#{playTime}
+          </if>
+          <if test="strVal1 !=null and strVal1.toString() !=''">
+             ,a.strVal1=#{strVal1}
+          </if>
+          <if test="strVal2 !=null and strVal2.toString() !=''">
+             ,a.strVal2=#{strVal2}
+          </if>
+          <if test="resolution !=null and resolution.toString() !=''">
+             ,a.resolution=#{resolution}
+          </if>
+          <if test="preViewMd5 !=null and preViewMd5.toString() !=''">
+             ,a.preViewMd5=#{preViewMd5}
+          </if>
+          <if test="preViewImgMd5 !=null and preViewImgMd5.toString() !=''">
+             ,a.preViewImgMd5=#{preViewImgMd5}
+          </if>
+	     WHERE materialId=#{materialId}
+	</update>
+	<update id="convertServerCallbackToUpdateMaterial" parameterType="com.facewnd.ad.modules.admaker.material.model.AdMaterialMODIFY">
+		UPDATE ad_material a
+		   SET a.lastDtm  = #{optDtm}
+		      ,a.lastUserId = #{optUserId}
+          <if test="convertState !=null">
+             ,a.convertState=#{convertState}
+          </if>
+          <if test="intVal2 !=null">
+             ,a.intVal2=#{intVal2}
+          </if>
+          <if test="playTime !=null">
+             ,a.playTime=#{playTime}
+          </if>
+          <if test="strVal2 !=null and strVal2.toString() !=''">
+             ,a.strVal2=#{strVal2}
+          </if>
+          <if test="resolution !=null and resolution.toString() !=''">
+             ,a.resolution=#{resolution}
+          </if>
+          <if test="preViewMd5 !=null and preViewMd5.toString() !=''">
+             ,a.preViewMd5=#{preViewMd5}
+          </if>
+          <if test="preViewImgMd5 !=null and preViewImgMd5.toString() !=''">
+             ,a.preViewImgMd5=#{preViewImgMd5}
+          </if>
+	     WHERE a.strVal1=#{strVal1}
+	</update>
+  	<update id="checkMaterial" parameterType="com.facewnd.ad.modules.admaker.material.model.AdMaterialMODIFY">
+		UPDATE ad_material a
+		   SET a.lastDtm  = #{optDtm}
+		      ,a.lastUserId = #{optUserId}
+		      <choose>
+		      	<when test="statusCode==1">
+	          ,a.statusCode=1
+		      	</when>
+		      	<otherwise>
+	          ,a.statusCode=-1
+		      	</otherwise>
+		      </choose>
+	     WHERE a.materialId IN
+	       <foreach item="item" index="index" collection="materialIds" open="(" separator="," close=")">
+		   	   #{item}
+		   </foreach>
+	</update>
+  	<update id="deleteMaterial" parameterType="com.facewnd.ad.modules.admaker.material.model.AdMaterialMODIFY">
+		UPDATE ad_material a
+		   SET a.lastDtm  = #{optDtm}
+		      ,a.lastUserId = #{optUserId}
+	          ,a.deleteFlag=1
+	     WHERE a.materialId IN
+	       <foreach item="item" index="index" collection="materialIds" open="(" separator="," close=")">
+		   	   #{item}
+		   </foreach>
+	</update>
+  	<update id="modifyMaterialUsedCount">
+		UPDATE ad_material a
+		   SET a.lastDtm  = #{optDtm}
+		      ,a.lastUserId = #{optUserId}
+		      <choose>
+		      	<when test='opt == "+"'>
+		      ,a.usageCounter = a.usageCounter + ${number}
+		      	</when>
+		      	<when test='opt == "-"'>
+		      ,a.usageCounter = IF(a.usageCounter &lt; ${number},0,a.usageCounter - ${number})
+		      	</when>
+		      </choose>
+	     WHERE a.materialId = #{materialId}
+	</update>
+</mapper>

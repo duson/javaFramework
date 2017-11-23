@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.device.dao.LicenseApplyMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.device.entity.LicenseApply">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ApplyId" jdbcType="BIGINT" property="applyId" />
+    <result column="CompanyId" jdbcType="BIGINT" property="companyId" />
+    <result column="ApplyUserId" jdbcType="BIGINT" property="applyUserId" />
+    <result column="ApplyNumb" jdbcType="INTEGER" property="applyNumb" />
+    <result column="ApplyDay" jdbcType="INTEGER" property="applyDay" />
+    <result column="ApplyNote" jdbcType="VARCHAR" property="applyNote" />
+    <result column="LicenseNumb" jdbcType="INTEGER" property="licenseNumb" />
+    <result column="LicenseDay" jdbcType="INTEGER" property="licenseDay" />
+    <result column="AuditorMuserId" jdbcType="BIGINT" property="auditorMuserId" />
+    <result column="AuditorDtm" jdbcType="TIMESTAMP" property="auditorDtm" />
+    <result column="AuditorNote" jdbcType="VARCHAR" property="auditorNote" />
+    <result column="StatusCode" jdbcType="SMALLINT" property="statusCode" />
+    <result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+  </resultMap>
+  
+  	<sql id="AdLicenseApplyBase">
+		a.applyid AS "applyId",
+		a.companyid AS "companyId",
+		a.applyuserid AS "applyUserId",
+		a.applyNumb AS "applyNumb",
+		a.applyDay AS "applyDay",
+		a.applynote AS "applyNote",
+		a.licensenumb AS "licenseNumb",
+		a.licenseday AS "licenseDay",
+		a.auditorMuserId AS "auditorMuserId",
+		a.auditordtm AS "auditorDtm",
+		a.auditornote AS "auditorNote",
+		a.statuscode AS "statusCode",
+		a.createdDtm AS "createdDtm"
+	</sql>
+	
+  	<select id="findLicenseApplyBackList" resultType="com.facewnd.ad.modules.device.model.LicenseApplyBackDTO">
+		SELECT
+		<include refid="AdLicenseApplyBase" />
+		, ss.companyName as companyName ,au.userMobile as userName
+		, ss.contact as contact,ss.companyAddress as companyAddress
+		, au.nickName as nickName,au.realName as realName
+		FROM
+		ad_license_apply a left join ad_company ss on a.companyId =
+		ss.companyId
+		left join ad_user au on a.applyUserId = au.userId
+		<where>
+			1=1
+			<if test="companyName != null">
+				and ss.companyName like CONCAT('%',#{companyName},'%')
+			</if>
+			<if test="applyUserName != null">
+				and au.userMobile like CONCAT('%',#{applyUserName},'%')
+			</if>
+			<if test="statusCode != null">
+				and a.statusCode = #{statusCode}
+			</if>
+			   
+			<!-- 申请时间 -->
+			<if test="applyDtmEnd != null and applyDtmEnd.toString() != ''">
+			    and a.createdDtm &lt;= #{applyDtmEnd}
+			</if>
+			<if test="applyDtmStart != null and applyDtmStart.toString() != ''">
+			   	and a.createdDtm >= #{applyDtmStart}
+			</if> 			   
+			   
+			ORDER BY a.CreatedDtm DESC
+		</where>
+	</select>  
+  
+  
+</mapper>

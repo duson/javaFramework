@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.base.account.dao.AdUserRoleMapMapper">
+	<resultMap id="BaseResultMap"
+		type="com.facewnd.ad.modules.base.account.entity.AdUserRoleMap">
+		<!-- WARNING - @mbg.generated -->
+		<id column="UserId" jdbcType="BIGINT" property="userId" />
+		<id column="RoleId" jdbcType="BIGINT" property="roleId" />
+		<result column="CompanyId" jdbcType="BIGINT" property="companyId" />
+		<result column="Comments" jdbcType="VARCHAR" property="comments" />
+		<result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+		<result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+		<result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+		<result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+		<result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+		<result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+	</resultMap>
+	<select id="queryRoleUserList" resultType="hashmap">
+		SELECT
+		ur.UserId AS userId,
+		u.UserMobile AS userAlias,
+		u.RealName AS realName
+		FROM
+		ad_user_role_map ur
+		INNER JOIN ad_user u ON ur.UserId = u.UserId
+		WHERE
+		u.DeleteFlag = 0
+		AND ur.RoleId = #{roleId}
+		ORDER BY
+		ur.CreatedDtm DESC
+	</select>
+</mapper>

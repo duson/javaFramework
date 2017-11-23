@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.admaker.classify.dao.AdClassifyMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.admaker.classify.entity.AdClassify">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ClassifyId" jdbcType="BIGINT" property="classifyId" />
+    <result column="ParentId" jdbcType="BIGINT" property="parentId" />
+    <result column="ClassifyType" jdbcType="SMALLINT" property="classifyType" />
+    <result column="CompanyId" jdbcType="BIGINT" property="companyId" />
+    <result column="ClassifyName" jdbcType="VARCHAR" property="classifyName" />
+    <result column="SortIndex" jdbcType="INTEGER" property="sortIndex" />
+    <result column="StatusCode" jdbcType="SMALLINT" property="statusCode" />
+    <result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="LastUserId" jdbcType="BIGINT" property="lastUserId" />
+    <result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+  </resultMap>
+	<select id="getClassifyList" parameterType="com.facewnd.ad.modules.admaker.classify.model.AdClassifyQUERY" 
+	                                resultType="com.facewnd.ad.modules.admaker.classify.model.AdClassifyBO">
+		SELECT a.classifyId     AS "classifyId"
+		      ,a.parentId       AS "parentId"
+		      ,a.classifyName   AS "classifyName"
+		      ,a.sortIndex      AS "sortIndex"
+		      ,a.companyId      AS "companyId"
+		      ,a.classifyType   AS "classifyType"
+		  FROM ad_classify a
+		 WHERE a.companyId = #{companyId}
+           AND a.classifyType=#{classifyType}
+         <if test="parentId !=null">
+           AND a.parentId=#{parentId}
+         </if>
+           AND a.statusCode=0
+           AND a.deleteFlag=0
+	</select>
+	<select id="getAdClassifyByName" parameterType="com.facewnd.ad.modules.admaker.classify.model.AdClassifyQUERY" 
+	                                resultType="com.facewnd.ad.modules.admaker.classify.model.AdClassifyBO">
+		SELECT a.classifyId     AS "classifyId"
+		      ,a.parentId       AS "parentId"
+		      ,a.classifyName   AS "classifyName"
+		      ,a.sortIndex      AS "sortIndex"
+		      ,a.companyId      AS "companyId"
+		      ,a.classifyType   AS "classifyType"
+		  FROM ad_classify a
+		 WHERE a.companyId = #{companyId}
+           AND a.classifyType=#{classifyType}
+           AND a.classifyName=#{classifyName}
+           AND a.parentId=#{parentId}
+           AND a.deleteFlag=0
+         LIMIT 1
+	</select>
+	<select id="getAdClassifyByParentId" parameterType="java.lang.Long" 
+	                                resultType="com.facewnd.ad.modules.admaker.classify.model.AdClassifyBO">
+		SELECT a.classifyId     AS "classifyId"
+		      ,a.parentId       AS "parentId"
+		      ,a.classifyName   AS "classifyName"
+		      ,a.sortIndex      AS "sortIndex"
+		      ,a.companyId      AS "companyId"
+		      ,a.classifyType   AS "classifyType"
+		  FROM ad_classify a
+         WHERE a.parentId=#{parentId}
+           AND a.deleteFlag=0
+         LIMIT 1
+	</select>
+  
+  	<update id="modifyClassify" parameterType="com.facewnd.ad.modules.admaker.classify.model.AdClassifyMODIFY">
+		UPDATE ad_classify a
+		   SET a.lastDtm  = #{optDtm}
+		      ,a.lastUserId = #{optUserId}
+	          <if test="classifyName !=null and classifyName.toString() !=''">
+	             ,a.classifyName=#{classifyName}
+	          </if>
+	          <if test="sortIndex !=null">
+	             ,a.sortIndex=#{sortIndex}
+	          </if>
+	     WHERE classifyId=#{classifyId}
+	</update>
+  	<update id="deleteClassify" parameterType="com.facewnd.ad.modules.admaker.classify.model.AdClassifyMODIFY">
+		UPDATE ad_classify a
+		   SET a.lastDtm  = #{optDtm}
+		      ,a.lastUserId = #{optUserId}
+	          ,a.deleteFlag=1
+	     WHERE classifyId=#{classifyId}
+	</update>
+</mapper>

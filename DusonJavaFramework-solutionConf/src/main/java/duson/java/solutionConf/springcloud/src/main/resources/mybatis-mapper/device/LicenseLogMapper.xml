@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.device.dao.LicenseLogMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.device.entity.LicenseLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="LogId" jdbcType="BIGINT" property="logId" />
+    <result column="LicenseId" jdbcType="BIGINT" property="licenseId" />
+    <result column="LogType" jdbcType="SMALLINT" property="logType" />
+    <result column="LogVal" jdbcType="BIGINT" property="logVal" />
+    <result column="LogNote" jdbcType="VARCHAR" property="logNote" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+  </resultMap>
+</mapper>

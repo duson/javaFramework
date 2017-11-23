@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.admaker.program.dao.AdProgramListMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.admaker.program.entity.AdProgramList">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ListId" jdbcType="BIGINT" property="listId" />
+    <result column="CompanyId" jdbcType="BIGINT" property="companyId" />
+    <result column="Resolution" jdbcType="VARCHAR" property="resolution" />
+    <result column="ListType" jdbcType="SMALLINT" property="listType" />
+    <result column="ListName" jdbcType="VARCHAR" property="listName" />
+    <result column="Version" jdbcType="INTEGER" property="version" />
+    <result column="BackMusic" jdbcType="VARCHAR" property="backMusic" />
+    <result column="BackMusicName" jdbcType="VARCHAR" property="backMusicName" />
+    <result column="BackMusicSize" jdbcType="INTEGER" property="backMusicSize" />
+    <result column="PlayTime" jdbcType="INTEGER" property="playTime" />
+    <result column="FileSize" jdbcType="INTEGER" property="fileSize" />
+    <result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="LastUserId" jdbcType="BIGINT" property="lastUserId" />
+    <result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+    <result column="ListJson" jdbcType="LONGVARCHAR" property="listJson" />
+  </resultMap>
+  <select id="getAdProgramListByName" parameterType="com.facewnd.ad.modules.admaker.program.model.list.AdProgramListQUERY"
+	                                 resultType="com.facewnd.ad.modules.admaker.program.model.list.AdProgramListBO">
+		SELECT *
+		  FROM ad_program_list a
+		 WHERE a.companyId = #{companyId}
+           AND a.listName=#{listName}
+           AND a.deleteFlag=0
+         LIMIT 1
+	</select>
+	<select id="getProgramListListCount" parameterType="com.facewnd.ad.modules.admaker.program.model.list.AdProgramListQUERY"
+	                              resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		  FROM ad_program_list a
+		   <if test="null !=classifyId and classifyId!=0">
+		 INNER JOIN (SELECT x2.classifyId,x2.classifyValId
+		               FROM ad_classify x1
+		              INNER JOIN ad_classify_map x2
+		                 ON x1.classifyId=x2.classifyId
+		                AND (x1.classifyId=#{classifyId} OR x1.parentId=#{classifyId})
+		                AND x1.statusCode=0
+		                AND x1.deleteFlag=0
+		     ) b
+		    ON a.listId=b.classifyValId
+		   </if>
+		 WHERE a.companyId = #{companyId}
+		   <if test="listName !=null and listName.toString() !=''">
+		   AND a.listName LIKE CONCAT('%',#{listName},'%')
+		   </if>
+           <if test="resolution !=null and resolution.toString() !=''">
+           AND a.resolution=#{resolution}
+           </if>
+           <if test="listType !=null">
+           AND a.listType=#{listType}
+           </if>
+           AND a.deleteFlag=0
+	</select>
+	<select id="getProgramListList" parameterType="com.facewnd.ad.modules.admaker.program.model.list.AdProgramListQUERY"
+	                              resultType="com.facewnd.ad.modules.admaker.program.model.list.AdProgramListBO">
+		SELECT a.listId
+		      ,a.companyId
+		      ,a.listName
+		      ,a.resolution
+		      ,a.listType
+		      ,a.version
+		      ,a.backMusic
+		      ,a.backMusicName
+		      ,a.backMusicSize
+		      ,a.playTime
+		      ,a.fileSize
+		      ,a.comments
+		      ,a.createdDtm
+		      ,a.createdUserId
+		      ,a.lastDtm
+		      ,a.lastUserId
+		      ,a.listJson
+		   <if test="null !=classifyId and classifyId!=0">
+		      ,b.classifyId
+		   </if>
+		  FROM ad_program_list a
+		   <if test="null !=classifyId and classifyId!=0">
+		 INNER JOIN (SELECT x2.classifyId,x2.classifyValId
+		               FROM ad_classify x1
+		              INNER JOIN ad_classify_map x2
+		                 ON x1.classifyId=x2.classifyId
+		                AND (x1.classifyId=#{classifyId} OR x1.parentId=#{classifyId})
+		                AND x1.statusCode=0
+		                AND x1.deleteFlag=0
+		     ) b
+		    ON a.listId=b.classifyValId
+		   </if>
+		 WHERE a.companyId = #{companyId}
+		   <if test="listName !=null and listName.toString() !=''">
+		   AND a.listName LIKE CONCAT('%',#{listName},'%')
+		   </if>
+           <if test="resolution !=null and resolution.toString() !=''">
+           AND a.resolution=#{resolution}
+           </if>
+           <if test="listType !=null">
+           AND a.listType=#{listType}
+           </if>
+           AND a.deleteFlag=0
+		<choose>
+			<when test="orderByKey != null and orderByKey.toString() != ''">
+				ORDER BY CONCAT('a.',${orderByKey},' ',${orderByValue})
+			</when>
+			<otherwise>
+		 		ORDER BY a.lastDtm DESC
+			</otherwise>
+		</choose>
+		 LIMIT #{firstRecord},#{pageSize}
+	</select>
+	<update id="modifyProgramList" parameterType="com.facewnd.ad.modules.admaker.program.model.list.AdProgramListMODIFY">
+		UPDATE ad_program_list a
+		   SET a.lastDtm  = #{optDtm}
+		      ,a.lastUserId = #{optUserId}
+          <if test="listName !=null and listName.toString() !=''">
+             ,a.listName=#{listName}
+          </if>
+          <if test="listJson !=null and listJson.toString() !=''">
+             ,a.version=a.version+1
+             ,a.listJson=#{listJson}<!-- listJson变动相关字段也更新 -->
+             ,a.listType=#{listType}
+             ,a.playTime=#{playTime}
+             ,a.fileSize=#{fileSize}
+             ,a.backMusic=#{backMusic}
+             ,a.backMusicName=#{backMusicName}
+             ,a.backMusicSize=#{backMusicSize}
+          </if>
+	     WHERE listId=#{listId}
+	</update>
+	<update id="deleteProgramList" parameterType="com.facewnd.ad.modules.admaker.program.model.list.AdProgramListMODIFY">
+		UPDATE ad_program_list a
+		   SET a.lastDtm  = #{optDtm}
+		      ,a.lastUserId = #{optUserId}
+	          ,a.deleteFlag=1
+	     WHERE a.listId IN
+	       <foreach item="item" index="index" collection="listIds" open="(" separator="," close=")">
+		   	   #{item}
+		   </foreach>
+	</update>
+	<select id="getProgramByListId" resultType="com.facewnd.ad.modules.admaker.program.model.AdProgramBO">
+		SELECT a.programId
+		      ,a.companyId
+		      ,a.programName
+		      ,a.programType
+		      ,a.templateInfo
+		      ,a.resolution
+		      ,a.version
+		      ,a.direction
+		      ,a.playTime
+		      ,a.fileSize
+		      ,a.createdDtm
+		      ,a.createdUserId
+		      ,a.lastDtm
+		      ,a.lastUserId
+		      ,a.layout
+		  FROM ad_program a
+		 INNER JOIN (SELECT DISTINCT x1.programId
+		               FROM ad_program_list_item x1
+		              WHERE x1.listId=#{listId}
+		     ) b
+		    ON a.programId=b.programId
+		 WHERE a.deleteFlag=0
+	</select>
+	
+	<select id="getGroupToIssueCount" parameterType="com.facewnd.ad.modules.admaker.program.model.issue.IssueGroupQUERY"
+	                              resultType="java.lang.Integer">
+	    SELECT COUNT(*)
+	      FROM ad_group a
+	   <where> 1=1
+	  	<choose>
+	     <when test="groupType ==0">
+	       AND (a.companyId=#{companyId} AND ( (a.areaA=0 AND a.resolutionA=#{resolution}) OR 
+								               (a.areaB=0 AND a.resolutionB=#{resolution}) OR 
+								               (a.areaC=0 AND a.resolutionC=#{resolution}) )
+			   )
+	      </when>
+	      <when test="groupType ==1">
+	       AND ( (a.areaA=#{companyId} AND a.resolutionA=#{resolution}) OR
+      		     (a.areaB=#{companyId} AND a.resolutionB=#{resolution}) OR
+      		     (a.areaC=#{companyId} AND a.resolutionC=#{resolution})
+      		   )
+	      </when>
+	      <otherwise>
+	       AND (a.companyId=#{companyId} OR a.areaA=#{companyId} OR a.areaB=#{companyId} OR a.areaC=#{companyId})
+	       AND ((a.companyId=#{companyId} AND a.areaA=0 OR a.areaA=#{companyId}) AND a.resolutionA=#{resolution} OR 
+	            (a.companyId=#{companyId} AND a.areaB=0 OR a.areaB=#{companyId}) AND a.resolutionB=#{resolution} OR 
+	            (a.companyId=#{companyId} AND a.areaC=0 OR a.areaC=#{companyId}) AND a.resolutionC=#{resolution}
+	           )
+	      </otherwise>
+	     </choose> 
+	       <if test="groupName !=null and groupName.toString()!=''">
+	       AND a.groupName LIKE CONCAT('%',#{groupName},'%')
+	       </if>
+	       AND a.statusCode=0 AND a.deleteFlag=0
+	     </where>     
+	</select>
+	<select id="getGroupToIssue" parameterType="com.facewnd.ad.modules.admaker.program.model.issue.IssueGroupQUERY"
+	                              resultType="com.facewnd.ad.modules.admaker.program.model.issue.IssueGroupBO">
+		SELECT a.groupId
+		      ,a.groupName
+		      ,a.deviceNumb
+		      ,CONCAT(
+		        IF((a.companyId=#{companyId} AND a.areaA=0 OR a.areaA=#{companyId}) AND a.resolutionA=#{resolution},'A',''),
+		      	IF((a.companyId=#{companyId} AND a.areaB=0 OR a.areaB=#{companyId}) AND a.resolutionB=#{resolution},'B',''),
+		      	IF((a.companyId=#{companyId} AND a.areaC=0 OR a.areaC=#{companyId}) AND a.resolutionC=#{resolution},'C','')
+		       ) AS area
+		      ,IF(a.companyId=#{companyId},0,1) AS groupType<!-- 类型 0 自己终端组 1 授权终端组 -->
+		  FROM ad_group a
+	   <where> 1=1
+	  	<choose>
+	     <when test="groupType ==0">
+	       AND (a.companyId=#{companyId} AND ( (a.areaA=0 AND a.resolutionA=#{resolution}) OR 
+								               (a.areaB=0 AND a.resolutionB=#{resolution}) OR 
+								               (a.areaC=0 AND a.resolutionC=#{resolution}) )
+			   )
+	      </when>
+	      <when test="groupType ==1">
+	       AND ( (a.areaA=#{companyId} AND a.resolutionA=#{resolution}) OR
+      		     (a.areaB=#{companyId} AND a.resolutionB=#{resolution}) OR
+      		     (a.areaC=#{companyId} AND a.resolutionC=#{resolution})
+      		   )
+	      </when>
+	      <otherwise>
+	       AND (a.companyId=#{companyId} OR a.areaA=#{companyId} OR a.areaB=#{companyId} OR a.areaC=#{companyId})
+	       AND ((a.companyId=#{companyId} AND a.areaA=0 OR a.areaA=#{companyId}) AND a.resolutionA=#{resolution} OR 
+	            (a.companyId=#{companyId} AND a.areaB=0 OR a.areaB=#{companyId}) AND a.resolutionB=#{resolution} OR 
+	            (a.companyId=#{companyId} AND a.areaC=0 OR a.areaC=#{companyId}) AND a.resolutionC=#{resolution}
+	           )
+	      </otherwise>
+	     </choose> 
+	       <if test="groupName !=null and groupName.toString()!=''">
+	       AND a.groupName LIKE CONCAT('%',#{groupName},'%')
+	       </if>
+	       AND a.statusCode=0 AND a.deleteFlag=0
+	     </where>   
+		<choose>
+			<when test="orderByKey != null and orderByKey.toString() != ''">
+				ORDER BY CONCAT('a.',${orderByKey},' ',${orderByValue})
+			</when>
+			<otherwise>
+		 		ORDER BY a.lastDtm DESC
+			</otherwise>
+		</choose>
+		 LIMIT #{firstRecord},#{pageSize}
+	</select>
+	<select id="getRegionListToIssue" parameterType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRegionQUERY"
+	                              resultType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRegionBO">
+		SELECT a.regionId
+		      ,a.marketName
+		      ,a.parentId
+		  FROM ad_region a
+		 WHERE a.companyId=#{companyId}
+		   AND a.resolution=#{resolution}
+	       <if test="marketName !=null and marketName.toString()!=''">
+	       AND a.marketName LIKE CONCAT('%',#{marketName},'%')
+	       </if>
+	       AND a.statusCode=0 AND a.deleteFlag=0
+	</select>
+	<select id="getGroupToIssueByRegionIds" resultType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRegionGroupBO">
+		SELECT b.groupId
+		      ,b.area
+		      ,b.regionId
+		  FROM ad_region a
+		 INNER JOIN ad_region_group_map b
+		    ON a.regionId=b.regionId
+		   AND a.regionId IN
+	       <foreach item="item" index="index" collection="regionIds" open="(" separator="," close=")">
+		   	   #{item}
+		   </foreach>
+		   AND a.companyId=#{companyId}
+	       AND a.statusCode=0 AND a.deleteFlag=0
+	</select>
+	<select id="getDeviceListOfGroupCount" parameterType="com.facewnd.ad.modules.admaker.program.model.issue.IssueGroupQUERY"
+	                              resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		  FROM ad_device a
+		 WHERE a.groupId = #{groupId}
+		   AND a.statusCode=0
+           AND a.deleteFlag=0
+	</select>
+	<select id="getDeviceListOfGroup" parameterType="com.facewnd.ad.modules.admaker.program.model.issue.IssueGroupQUERY"
+	                              resultType="com.facewnd.ad.modules.admaker.program.model.issue.IssueDeviceBO">
+	    SELECT t.*
+	          ,IF(t.reportDtm>=DATE_SUB(NOW(),INTERVAL 5 MINUTE),true,false) AS isOnline<!-- 5分钟内有上报，视为在线 -->
+	      FROM (
+				SELECT a.deviceId
+				      ,a.companyId
+				      ,a.groupId
+				      ,a.deviceName
+				      ,a.macAddress
+				      ,a.setAddress
+				      ,a.direction
+				      ,a.resolution
+				      ,a.appVersion
+				      ,a.longitude
+				      ,a.latitude
+				      ,a.province
+				      ,a.city
+				      ,a.district
+				      ,a.reportAddress
+				      ,a.reportDtm
+				  FROM ad_device a
+				 WHERE a.groupId = #{groupId}
+				   AND a.statusCode=0
+		           AND a.deleteFlag=0
+				<choose>
+					<when test="orderByKey != null and orderByKey.toString() != ''">
+						ORDER BY CONCAT('a.',${orderByKey},' ',${orderByValue})
+					</when>
+					<otherwise>
+				 		ORDER BY a.deviceId ASC
+					</otherwise>
+				</choose>
+				 LIMIT #{firstRecord},#{pageSize}
+	         ) t
+	</select>
+	<select id="getGroupListOfRegionCount" parameterType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRegionQUERY"
+	                              resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		  FROM ad_group a
+		 INNER JOIN (
+		 			SELECT groupId,GROUP_CONCAT(area) AS area
+		 			  FROM ad_region_group_map
+		 			 WHERE regionId = #{regionId}
+		 			 GROUP BY groupId
+		     ) b
+		    ON a.groupId=b.groupId
+		   AND a.statusCode=0
+           AND a.deleteFlag=0
+		   AND a.statusCode=0
+           AND a.deleteFlag=0
+	</select>
+	<select id="getGroupListOfRegion" parameterType="com.facewnd.ad.modules.admaker.program.model.issue.IssueRegionQUERY"
+	                              resultType="com.facewnd.ad.modules.admaker.program.model.issue.IssueGroupBO">
+	    SELECT t.*
+		      ,IF(t.companyId=#{companyId},0,1) AS groupType<!-- 类型 0 自己终端组 1 授权终端组 -->
+	      FROM (
+			    SELECT a.groupId
+				      ,a.groupName
+				      ,a.companyId
+				      ,a.areaA
+				      ,a.areaB
+				      ,a.areaC
+				      ,a.resolutionA
+				      ,a.resolutionB
+				      ,a.resolutionC
+				      ,a.deviceNumb
+				      ,a.workDay
+				      ,a.workTime
+				      ,b.area
+				  FROM ad_group a
+				 INNER JOIN (
+				 			SELECT groupId,GROUP_CONCAT(area) AS area
+				 			  FROM ad_region_group_map
+				 			 WHERE regionId = #{regionId}
+				 			 GROUP BY groupId
+				     ) b
+				    ON a.groupId=b.groupId
+				   AND a.statusCode=0
+		           AND a.deleteFlag=0
+				<choose>
+					<when test="orderByKey != null and orderByKey.toString() != ''">
+						ORDER BY CONCAT('a.',${orderByKey},' ',${orderByValue})
+					</when>
+					<otherwise>
+				 		ORDER BY a.groupId ASC
+					</otherwise>
+				</choose>
+				 LIMIT #{firstRecord},#{pageSize}
+	         ) t
+		<choose>
+			<when test="orderByKey != null and orderByKey.toString() != ''">
+				ORDER BY CONCAT(${orderByKey},' ',${orderByValue})
+			</when>
+			<otherwise>
+		 		ORDER BY groupId ASC
+			</otherwise>
+		</choose>
+		
+	</select>
+</mapper>

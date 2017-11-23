@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.admaker.program.dao.AdProgramMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.admaker.program.entity.AdProgram">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ProgramId" jdbcType="BIGINT" property="programId" />
+    <result column="CompanyId" jdbcType="BIGINT" property="companyId" />
+    <result column="TemplateInfo" jdbcType="VARCHAR" property="templateInfo" />
+    <result column="Resolution" jdbcType="VARCHAR" property="resolution" />
+    <result column="ProgramType" jdbcType="SMALLINT" property="programType" />
+    <result column="ProgramName" jdbcType="VARCHAR" property="programName" />
+    <result column="Version" jdbcType="INTEGER" property="version" />
+    <result column="Direction" jdbcType="SMALLINT" property="direction" />
+    <result column="PlayTime" jdbcType="INTEGER" property="playTime" />
+    <result column="FileSize" jdbcType="INTEGER" property="fileSize" />
+    <result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="LastUserId" jdbcType="BIGINT" property="lastUserId" />
+    <result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+    <result column="Layout" jdbcType="LONGVARCHAR" property="layout" />
+  </resultMap>
+	<select id="getUnusedListByIds" resultType="java.lang.Long">
+		SELECT a.programId
+		  FROM ad_program a
+		 WHERE a.programId IN
+	       <foreach item="item" index="index" collection="programIds" open="(" separator="," close=")">
+		   	   #{item}
+		   </foreach>
+           AND a.deleteFlag=0
+           AND NOT EXISTS(SELECT 1
+            				FROM ad_program_list_item b
+            			   WHERE a.programId=b.programId
+             )
+	</select>
+	<select id="getAdProgramByName" parameterType="com.facewnd.ad.modules.admaker.program.model.AdProgramQUERY"
+	                                 resultType="com.facewnd.ad.modules.admaker.program.model.AdProgramBO">
+		SELECT *
+		  FROM ad_program a
+		 WHERE a.companyId = #{companyId}
+           AND a.programName=#{programName}
+           <if test="programType !=null">
+           AND a.programType =#{programType}
+           </if>
+           AND a.deleteFlag=0
+         LIMIT 1
+	</select>
+	<select id="getLayoutByIds" resultType="java.lang.String">
+		SELECT a.layout
+		  FROM ad_program a
+		 WHERE a.programId IN
+	       <foreach item="item" index="index" collection="programIds" open="(" separator="," close=")">
+		   	   #{item}
+		   </foreach>
+	</select>
+	<select id="getProgramListCount" parameterType="com.facewnd.ad.modules.admaker.program.model.AdProgramQUERY"
+	                              resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		  FROM ad_program a
+		   <if test="null !=classifyId and classifyId!=0">
+		 INNER JOIN (SELECT x2.classifyId,x2.classifyValId
+		               FROM ad_classify x1
+		              INNER JOIN ad_classify_map x2
+		                 ON x1.classifyId=x2.classifyId
+		                AND (x1.classifyId=#{classifyId} OR x1.parentId=#{classifyId})
+		                AND x1.statusCode=0
+		                AND x1.deleteFlag=0
+		     ) b
+		    ON a.programId=b.classifyValId
+		   </if>
+		 WHERE a.companyId = #{companyId}
+		   <if test="programName !=null and programName.toString() !=''">
+		   AND a.programName LIKE CONCAT('%',#{programName},'%')
+		   </if>
+           <if test="resolution !=null and resolution.toString() !=''">
+           AND a.resolution=#{resolution}
+           </if>
+           <if test="programType !=null">
+           AND a.programType=#{programType}
+           </if>
+           <if test="direction !=null">
+           AND a.direction=#{direction}
+           </if>
+           AND a.deleteFlag=0
+	</select>
+	<select id="getProgramList" parameterType="com.facewnd.ad.modules.admaker.program.model.AdProgramQUERY"
+	                              resultType="com.facewnd.ad.modules.admaker.program.model.AdProgramBO">
+	    SELECT a.programId
+		      ,a.companyId
+		      ,a.programName
+		      ,a.programType
+		      ,a.templateInfo
+		      ,a.resolution
+		      ,a.version
+		      ,a.direction
+		      ,a.playTime
+		      ,a.fileSize
+		      ,a.createdDtm
+		      ,a.createdUserId
+		      ,a.lastDtm
+		      ,a.lastUserId
+		      ,a.layout
+		   <if test="null !=classifyId and classifyId!=0">
+		      ,b.classifyId
+		   </if>
+		  FROM ad_program a
+		   <if test="null !=classifyId and classifyId!=0">
+		 INNER JOIN (SELECT x2.classifyId,x2.classifyValId
+		               FROM ad_classify x1
+		              INNER JOIN ad_classify_map x2
+		                 ON x1.classifyId=x2.classifyId
+		                AND (x1.classifyId=#{classifyId} OR x1.parentId=#{classifyId})
+		                AND x1.statusCode=0
+		                AND x1.deleteFlag=0
+		     ) b
+		    ON a.programId=b.classifyValId
+		   </if>
+		 WHERE a.companyId = #{companyId}
+		   <if test="programName !=null and programName.toString() !=''">
+		   AND a.programName LIKE CONCAT('%',#{programName},'%')
+		   </if>
+           <if test="resolution !=null and resolution.toString() !=''">
+           AND a.resolution=#{resolution}
+           </if>
+           <if test="programType !=null">
+           AND a.programType=#{programType}
+           </if>
+           <if test="direction !=null">
+           AND a.direction=#{direction}
+           </if>
+           AND a.deleteFlag=0
+		<choose>
+			<when test="orderByKey != null and orderByKey.toString() != ''">
+				ORDER BY CONCAT('a.',${orderByKey},' ',${orderByValue})
+			</when>
+			<otherwise>
+		 		ORDER BY a.lastDtm DESC
+			</otherwise>
+		</choose>
+		 LIMIT #{firstRecord},#{pageSize}
+	</select>
+	<select id="getCompanyResolutionListAll" parameterType="com.facewnd.ad.modules.admaker.program.model.AdProgramQUERY"
+	                                 resultType="com.facewnd.ad.modules.admaker.program.model.ValidResolutionBO">
+		 SELECT DISTINCT t.resolution
+		   FROM (SELECT a.resolutionA AS resolution
+		           FROM ad_group a
+		          WHERE (companyId=#{companyId} AND areaA=0 OR areaA=#{companyId}) AND ResolutionA !='0*0'
+		            AND a.deleteFlag=0 AND a.statusCode=0
+		          UNION ALL
+		         SELECT a.resolutionB AS resolution
+		           FROM ad_group a
+		          WHERE (companyId=#{companyId} AND areaB=0 OR areaB=#{companyId}) AND ResolutionB !='0*0'
+		            AND a.deleteFlag=0 AND a.statusCode=0
+		          UNION ALL
+		         SELECT a.resolutionC AS resolution
+		           FROM ad_group a
+		          WHERE (companyId=#{companyId} AND areaC=0 OR areaC=#{companyId}) AND ResolutionC !='0*0'
+		            AND a.deleteFlag=0 AND a.statusCode=0
+              ) t
+          ORDER BY t.resolution
+	</select>
+	
+	<select id="getCompanyResolutionListCount" parameterType="com.facewnd.ad.modules.admaker.program.model.ValidResolutionQUERY"
+	                                 resultType="java.lang.Integer">
+	<!--                                
+		SELECT COUNT(DISTINCT companyId,direction,templateName,showArea,resolution,resolutionA,resolutionB,resolutionC)
+		  FROM (
+		  		SELECT companyId,direction,templateName,'A' as showArea,resolutionA AS resolution,resolutionA,resolutionB,resolutionC,IF(LEAST(backupA,backupC,backupC)=0,1,0) AS isBackup 
+		  		  FROM ad_group WHERE (companyId=#{companyId} AND areaA=0 OR areaA=#{companyId}) AND resolutionA!='0*0' AND deleteFlag=0 AND statusCode=0
+		  		 UNION ALL
+		  		SELECT companyId,direction,templateName,'B' as showArea,resolutionB AS resolution,resolutionA,resolutionB,resolutionC,IF(LEAST(backupA,backupC,backupC)=0,1,0) AS isBackup
+		  		  FROM ad_group WHERE (companyId=#{companyId} AND areaB=0 OR areaB=#{companyId}) AND resolutionB!='0*0' AND deleteFlag=0 AND statusCode=0
+		  		 UNION ALL
+		  		SELECT companyId,direction,templateName,'C' as showArea,resolutionC AS resolution,resolutionA,resolutionB,resolutionC,IF(LEAST(backupA,backupC,backupC)=0,1,0) AS isBackup
+		  		  FROM ad_group WHERE (companyId=#{companyId} AND areaC=0 OR areaC=#{companyId}) AND resolutionC!='0*0' AND deleteFlag=0 AND statusCode=0
+		     ) t  
+		 WHERE 1=1
+		   <if test="templateName !=null and templateName.toString() !=''">
+           AND templateName=#{templateName}
+          </if>
+          <if test="showArea !=null and showArea.toString() !=''">
+           AND showArea=#{showArea}
+          </if>
+          <if test="direction !=null">
+           AND direction=#{direction}
+          </if>
+          <if test="resolution !=null and resolution.toString() !=''">
+           AND resolution=#{resolution}
+          </if>
+		   <if test="isBackup ==1">
+		   AND isBackup = 1
+		   </if> 
+	-->                            
+		 SELECT COUNT(*)
+		   FROM (SELECT a.direction,a.templateName,a.resolutionA,a.resolutionB,a.resolutionC
+				       ,b.showArea
+				       ,CASE WHEN b.showArea='A' THEN a.resolutionA
+				       		 WHEN b.showArea='B' THEN a.resolutionB
+				       		 WHEN b.showArea='C' THEN a.resolutionC
+				       		 ELSE ''
+				         END AS resolution
+				       ,MIN(a.companyId) AS companyId
+				       ,MAX(IF(LOCATE(b.showArea,a.isBackups)>0,1,0)) AS isBackup
+				  FROM (
+				  		SELECT IF(companyId=#{companyId},-1,companyId) AS companyId<!-- 本公司要转义掉，以便去重 -->
+				  		      ,direction,templateName,resolutionA,resolutionB,resolutionC
+				  		      ,CONCAT(IF(companyId=#{companyId} AND areaA=0 AND backupA>0,'A',''), 
+				  		              IF(companyId=#{companyId} AND areaB=0 AND backupB>0,'B',''), 
+				  		              IF(companyId=#{companyId} AND areaC=0 AND backupC>0,'C','')
+				  		       ) AS isBackups
+				  		 <choose>
+				  		 	<when test="resolution !=null and resolution.toString() !=''">
+						      ,CONCAT(IF((companyId=#{companyId} AND areaA=0 OR areaA=#{companyId}) AND resolutionA=#{resolution},'A',''),
+						      	      IF((companyId=#{companyId} AND areaB=0 OR areaB=#{companyId}) AND resolutionB=#{resolution},'B',''),
+						      	      IF((companyId=#{companyId} AND areaC=0 OR areaC=#{companyId}) AND resolutionC=#{resolution},'C','')
+						       ) AS showAreas 
+				  		 	</when>
+				  		 	<otherwise>
+						      ,CONCAT(IF((companyId=#{companyId} AND areaA=0 OR areaA=#{companyId}) AND resolutionA!='0*0','A',''),
+						      	      IF((companyId=#{companyId} AND areaB=0 OR areaB=#{companyId}) AND resolutionB!='0*0','B',''),
+						      	      IF((companyId=#{companyId} AND areaC=0 OR areaC=#{companyId}) AND resolutionC!='0*0','C','')
+						       ) AS showAreas 
+				  		 	</otherwise>
+				  		 </choose>
+				  		  FROM ad_group 
+				  		 WHERE (companyId=#{companyId} OR areaA=#{companyId} OR areaB=#{companyId} OR areaC=#{companyId})
+				  		 <choose>
+				  		 	<when test="resolution !=null and resolution.toString() !=''">
+					       AND ((companyId=#{companyId} AND areaA=0 OR areaA=#{companyId}) AND resolutionA=#{resolution} OR 
+					            (companyId=#{companyId} AND areaB=0 OR areaB=#{companyId}) AND resolutionB=#{resolution} OR 
+					            (companyId=#{companyId} AND areaC=0 OR areaC=#{companyId}) AND resolutionC=#{resolution}
+					           )
+				  		 	</when>
+				  		 	<otherwise>
+				  		   AND ((companyId=#{companyId} AND areaA=0 OR areaA=#{companyId}) OR
+				  		   		(companyId=#{companyId} AND areaB=0 OR areaB=#{companyId}) OR
+				  		   		(companyId=#{companyId} AND areaC=0 OR areaC=#{companyId})
+				  		       )
+				  		 	</otherwise>
+				  		 </choose>
+						   <if test="templateName !=null and templateName.toString() !=''">
+				           AND templateName=#{templateName}
+				          </if>
+				          <if test="direction !=null">
+				           AND direction=#{direction}
+				          </if>
+				  		   AND deleteFlag=0 AND statusCode=0
+				     ) a
+				  LEFT JOIN (SELECT 'A' as showArea UNION ALL SELECT 'B' as showArea UNION ALL SELECT 'C' as showArea) b
+		   			ON a.showAreas LIKE CONCAT('%',b.showArea,'%')
+		   		 WHERE 1=1
+				   <if test="isBackup ==1">
+				   AND LOCATE(b.showArea,a.isBackups) >0
+				   </if> 
+		          <if test="showArea !=null and showArea.toString() !=''">
+		           AND b.showArea=#{showArea}
+		          </if>
+				 GROUP BY a.direction,a.templateName,a.resolutionA,a.resolutionB,a.resolutionC,b.showArea,resolution
+		     ) t
+	</select>
+	<select id="getCompanyResolutionList" parameterType="com.facewnd.ad.modules.admaker.program.model.ValidResolutionQUERY"
+	                                 resultType="com.facewnd.ad.modules.admaker.program.model.ValidResolutionBO">
+		 SELECT IF(t.companyId=-1,#{companyId},t.companyId) AS companyId
+		       ,t.direction,t.templateName,t.resolutionA,t.resolutionB,t.resolutionC,t.showArea,t.resolution,t.isBackup
+		   FROM (SELECT a.direction,a.templateName,a.resolutionA,a.resolutionB,a.resolutionC
+				       ,b.showArea
+				       ,CASE WHEN b.showArea='A' THEN a.resolutionA
+				       		 WHEN b.showArea='B' THEN a.resolutionB
+				       		 WHEN b.showArea='C' THEN a.resolutionC
+				       		 ELSE ''
+				         END AS resolution
+				       ,MIN(a.companyId) AS companyId
+				       ,MAX(IF(LOCATE(b.showArea,a.isBackups)>0,1,0)) AS isBackup
+				  FROM (
+				  		SELECT IF(companyId=#{companyId},-1,companyId) AS companyId<!-- 本公司要转义掉，以便去重 -->
+				  		      ,direction,templateName,resolutionA,resolutionB,resolutionC
+				  		      ,CONCAT(IF(companyId=#{companyId} AND areaA=0 AND backupA>0,'A',''), 
+				  		              IF(companyId=#{companyId} AND areaB=0 AND backupB>0,'B',''), 
+				  		              IF(companyId=#{companyId} AND areaC=0 AND backupC>0,'C','')
+				  		       ) AS isBackups
+				  		 <choose>
+				  		 	<when test="resolution !=null and resolution.toString() !=''">
+						      ,CONCAT(IF((companyId=#{companyId} AND areaA=0 OR areaA=#{companyId}) AND resolutionA=#{resolution},'A',''),
+						      	      IF((companyId=#{companyId} AND areaB=0 OR areaB=#{companyId}) AND resolutionB=#{resolution},'B',''),
+						      	      IF((companyId=#{companyId} AND areaC=0 OR areaC=#{companyId}) AND resolutionC=#{resolution},'C','')
+						       ) AS showAreas 
+				  		 	</when>
+				  		 	<otherwise>
+						      ,CONCAT(IF((companyId=#{companyId} AND areaA=0 OR areaA=#{companyId}) AND resolutionA!='0*0','A',''),
+						      	      IF((companyId=#{companyId} AND areaB=0 OR areaB=#{companyId}) AND resolutionB!='0*0','B',''),
+						      	      IF((companyId=#{companyId} AND areaC=0 OR areaC=#{companyId}) AND resolutionC!='0*0','C','')
+						       ) AS showAreas 
+				  		 	</otherwise>
+				  		 </choose>
+				  		  FROM ad_group 
+				  		 WHERE (companyId=#{companyId} OR areaA=#{companyId} OR areaB=#{companyId} OR areaC=#{companyId})
+				  		 <choose>
+				  		 	<when test="resolution !=null and resolution.toString() !=''">
+					       AND ((companyId=#{companyId} AND areaA=0 OR areaA=#{companyId}) AND resolutionA=#{resolution} OR 
+					            (companyId=#{companyId} AND areaB=0 OR areaB=#{companyId}) AND resolutionB=#{resolution} OR 
+					            (companyId=#{companyId} AND areaC=0 OR areaC=#{companyId}) AND resolutionC=#{resolution}
+					           )
+				  		 	</when>
+				  		 	<otherwise>
+				  		   AND ((companyId=#{companyId} AND areaA=0 OR areaA=#{companyId}) OR
+				  		   		(companyId=#{companyId} AND areaB=0 OR areaB=#{companyId}) OR
+				  		   		(companyId=#{companyId} AND areaC=0 OR areaC=#{companyId})
+				  		       )
+				  		 	</otherwise>
+				  		 </choose>
+						   <if test="templateName !=null and templateName.toString() !=''">
+				           AND templateName=#{templateName}
+				          </if>
+				          <if test="direction !=null">
+				           AND direction=#{direction}
+				          </if>
+				  		   AND deleteFlag=0 AND statusCode=0
+				     ) a
+				  LEFT JOIN (SELECT 'A' as showArea UNION ALL SELECT 'B' as showArea UNION ALL SELECT 'C' as showArea) b
+		   			ON a.showAreas LIKE CONCAT('%',b.showArea,'%')
+		   		 WHERE 1=1
+				   <if test="isBackup ==1">
+				   AND LOCATE(b.showArea,a.isBackups) >0
+				   </if> 
+		          <if test="showArea !=null and showArea.toString() !=''">
+		           AND b.showArea=#{showArea}
+		          </if>
+				 GROUP BY a.direction,a.templateName,a.resolutionA,a.resolutionB,a.resolutionC,b.showArea,resolution
+		     ) t
+		 ORDER BY templateName,showArea,resolution
+		 LIMIT #{firstRecord},#{pageSize}
+	</select>
+	<update id="modifyProgram" parameterType="com.facewnd.ad.modules.admaker.program.model.AdProgramMODIFY">
+		UPDATE ad_program a
+		   SET a.lastDtm  = #{optDtm}
+		      ,a.lastUserId = #{optUserId}
+          <if test="programName !=null and programName.toString() !=''">
+             ,a.programName=#{programName}
+          </if>
+          <if test="layout !=null and layout.toString() !=''">
+             ,a.version=a.version+1
+             ,a.layout=#{layout}
+             ,a.playTime=#{playTime}
+             ,a.fileSize=#{fileSize}
+          </if>
+	     WHERE programId=#{programId}
+	</update>
+	<update id="deleteProgram" parameterType="com.facewnd.ad.modules.admaker.program.model.AdProgramMODIFY">
+		UPDATE ad_program a
+		   SET a.lastDtm  = #{optDtm}
+		      ,a.lastUserId = #{optUserId}
+	          ,a.deleteFlag=1
+	     WHERE a.programId IN
+	       <foreach item="item" index="index" collection="programIds" open="(" separator="," close=")">
+		   	   #{item}
+		   </foreach>
+	</update>
+	
+	<select id="getProgramUsedListCount" parameterType="com.facewnd.ad.modules.admaker.program.model.AdProgramQUERY"
+	                              resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		  FROM ad_program_list a
+		 INNER JOIN (SELECT DISTINCT x1.listId
+		               FROM ad_program_list_item x1
+		              WHERE x1.programId=#{programId}
+		     ) b
+		    ON a.listId=b.listId
+		 WHERE a.companyId = #{companyId}
+           AND a.deleteFlag=0
+	</select>
+	<select id="getProgramUsedList" parameterType="com.facewnd.ad.modules.admaker.program.model.AdProgramQUERY"
+	                              resultType="com.facewnd.ad.modules.admaker.program.model.list.AdProgramListBO">
+		SELECT a.listId
+		      ,a.companyId
+		      ,a.listName
+		      ,a.resolution
+		      ,a.listType
+		      ,a.version
+		      ,a.backMusic
+		      ,a.backMusicName
+		      ,a.backMusicSize
+		      ,a.playTime
+		      ,a.fileSize
+		      ,a.comments
+		      ,a.createdDtm
+		      ,a.createdUserId
+		      ,a.lastDtm
+		      ,a.lastUserId
+		      ,a.listJson
+		  FROM ad_program_list a
+		 INNER JOIN (SELECT DISTINCT x1.listId
+		               FROM ad_program_list_item x1
+		              WHERE x1.programId=#{programId}
+		     ) b
+		    ON a.listId=b.listId
+		 WHERE a.companyId = #{companyId}
+           AND a.deleteFlag=0
+		<choose>
+			<when test="orderByKey != null and orderByKey.toString() != ''">
+				ORDER BY CONCAT('a.',${orderByKey},' ',${orderByValue})
+			</when>
+			<otherwise>
+		 		ORDER BY a.listId DESC
+			</otherwise>
+		</choose>
+		 LIMIT #{firstRecord},#{pageSize}
+	</select>
+</mapper>

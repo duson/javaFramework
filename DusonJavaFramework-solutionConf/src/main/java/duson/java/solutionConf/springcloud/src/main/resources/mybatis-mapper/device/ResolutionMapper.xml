@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.device.dao.ResolutionMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.device.entity.Resolution">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ResolutionId" jdbcType="BIGINT" property="resolutionId" />
+    <result column="CompanyId" jdbcType="BIGINT" property="companyId" />
+    <result column="TemplateName" jdbcType="VARCHAR" property="templateName" />
+    <result column="Direction" jdbcType="SMALLINT" property="direction" />
+    <result column="Area" jdbcType="VARCHAR" property="area" />
+    <result column="ResolutionA" jdbcType="VARCHAR" property="resolutionA" />
+    <result column="ResolutionB" jdbcType="VARCHAR" property="resolutionB" />
+    <result column="ResolutionC" jdbcType="VARCHAR" property="resolutionC" />
+    <result column="StatusCode" jdbcType="SMALLINT" property="statusCode" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="LastUserId" jdbcType="BIGINT" property="lastUserId" />
+    <result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal3" jdbcType="BIGINT" property="intVal3" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+  </resultMap>
+  
+   <update id="updateStatusByUnlinked">
+	 UPDATE ad_company_resolution res INNER JOIN(
+	
+		SELECT t1.ResolutionId FROM ad_company_resolution_group_map t1
+			LEFT JOIN (
+				SELECT t1.ResolutionId FROM ad_company_resolution_group_map t1
+					INNER JOIN ad_company_resolution_group_map t2 ON t1.ResolutionId=t2.ResolutionId
+				WHERE t2.GroupId = #{groupId} AND t1.GroupId &lt;&gt; #{groupId}
+				<if test="companyId != null and companyId != 0"> AND t1.CompanyId=#{companyId}</if>
+			) t2 ON t1.ResolutionId=t2.ResolutionId
+		WHERE t1.GroupId = #{groupId} 
+		<if test="companyId != null and companyId != 0"> AND t1.CompanyId=#{companyId}</if>
+		 AND t2.ResolutionId IS NULL
+		
+	) map ON res.ResolutionId=map.ResolutionId
+	SET StatusCode = 1
+	WHERE res.StatusCode &lt;&gt; 1
+  </update>
+</mapper>

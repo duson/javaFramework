@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.base.account.dao.AdCompanyMapper">
+	<resultMap id="BaseResultMap"
+		type="com.facewnd.ad.modules.base.account.entity.AdCompany">
+		<!-- WARNING - @mbg.generated -->
+		<id column="CompanyId" jdbcType="BIGINT" property="companyId" />
+		<result column="CompanyName" jdbcType="VARCHAR" property="companyName" />
+		<result column="UserId" jdbcType="BIGINT" property="userId" />
+		<result column="ApplyId" jdbcType="BIGINT" property="applyId" />
+		<result column="ProvinceCode" jdbcType="VARCHAR" property="provinceCode" />
+		<result column="CityCode" jdbcType="VARCHAR" property="cityCode" />
+		<result column="DistrictCode" jdbcType="VARCHAR" property="districtCode" />
+		<result column="Province" jdbcType="VARCHAR" property="province" />
+		<result column="City" jdbcType="VARCHAR" property="city" />
+		<result column="District" jdbcType="VARCHAR" property="district" />
+		<result column="CompanyAddress" jdbcType="VARCHAR" property="companyAddress" />
+		<result column="Contact" jdbcType="VARCHAR" property="contact" />
+		<result column="IsAuditor" jdbcType="SMALLINT" property="isAuditor" />
+		<result column="StatusCode" jdbcType="SMALLINT" property="statusCode" />
+		<result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+		<result column="Comments" jdbcType="VARCHAR" property="comments" />
+		<result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+		<result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+		<result column="LastUserId" jdbcType="BIGINT" property="lastUserId" />
+		<result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+		<result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+		<result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+		<result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+		<result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+	</resultMap>
+
+	<select id="queryUserCompanyList" resultType="hashmap">
+		SELECT
+		uc.CompanyId AS companyId,
+		uc.IsDefault AS isDefault,
+		c.CompanyName AS companyName,
+		c.ApplyId AS applyId,
+		c.ProvinceCode AS provinceCode,
+		c.CityCode AS cityCode,
+		c.DistrictCode AS districtCode,
+		c.Province AS province,
+		c.City AS city,
+		c.District AS district,
+		c.Contact AS contact,
+		c.IsAuditor AS isAuditor,
+		c.CreatedDtm AS createdDtm,
+		c.StatusCode AS statusCode,
+		c.CompanyAddress AS companyAddress
+		FROM
+		ad_user_company_map uc
+		INNER JOIN ad_company c ON uc.CompanyId = c.CompanyId
+		WHERE
+		uc.UserId = #{userId}
+		AND c.DeleteFlag = 0
+		ORDER BY
+		uc.IsDefault DESC
+	</select>
+</mapper>

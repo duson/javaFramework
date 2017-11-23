@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.base.account.dao.AdFunctionMapper">
+	<resultMap id="BaseResultMap"
+		type="com.facewnd.ad.modules.base.account.entity.AdFunction">
+		<!-- WARNING - @mbg.generated -->
+		<id column="FunctionId" jdbcType="BIGINT" property="functionId" />
+		<result column="ParentId" jdbcType="BIGINT" property="parentId" />
+		<result column="FunctionClassify" jdbcType="SMALLINT" property="functionClassify" />
+		<result column="FunctionName" jdbcType="VARCHAR" property="functionName" />
+		<result column="FunctionType" jdbcType="SMALLINT" property="functionType" />
+		<result column="Icon" jdbcType="VARCHAR" property="icon" />
+		<result column="FunctionUrl" jdbcType="VARCHAR" property="functionUrl" />
+		<result column="OperationMask" jdbcType="VARCHAR" property="operationMask" />
+		<result column="SortIndex" jdbcType="INTEGER" property="sortIndex" />
+		<result column="StatusCode" jdbcType="SMALLINT" property="statusCode" />
+		<result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+		<result column="Comments" jdbcType="VARCHAR" property="comments" />
+		<result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+		<result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+		<result column="LastUserId" jdbcType="BIGINT" property="lastUserId" />
+		<result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+		<result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+		<result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+		<result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+		<result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+	</resultMap>
+
+	<select id="queryUserCompanyFunctionList" resultType="hashmap">
+		SELECT
+		f.FunctionId AS functionId,
+		f.ParentId AS parentId,
+		f.FunctionName AS
+		functionName,
+		f.FunctionType AS functionType,
+		f.FunctionUrl AS
+		functionUrl,
+		f.Icon AS icon,
+		f.OperationMask AS operationMask,
+		f.SortIndex AS sortIndex
+		FROM
+		ad_role_function_map rf
+		INNER JOIN
+		ad_function f ON rf.FunctionId = f.FunctionId AND f.FunctionClassify=1
+		INNER JOIN ad_role r ON rf.RoleId = r.RoleId
+		INNER JOIN
+		ad_user_role_map ur ON rf.RoleId = ur.RoleId
+		AND r.RoleId = ur.RoleId
+		WHERE
+		r.CompanyId = #{companyId}
+		AND ur.UserId = #{userId}
+		AND
+		f.StatusCode = 0
+		AND f.DeleteFlag = 0
+		ORDER BY
+		f.SortIndex
+	</select>
+
+	<select id="queryUserFunctionList" resultType="hashmap">
+		SELECT
+		f.FunctionId AS functionId,
+		f.ParentId AS parentId,
+		f.FunctionName AS functionName,
+		f.FunctionType AS functionType,
+		f.FunctionUrl AS functionUrl,
+		f.Icon AS icon,
+		f.OperationMask AS operationMask,
+		f.SortIndex AS sortIndex
+		FROM
+		ad_role_function_map rf
+		INNER JOIN ad_function f ON rf.FunctionId = f.FunctionId AND
+		f.FunctionClassify=0
+		INNER JOIN ad_role r ON rf.RoleId = r.RoleId
+		INNER JOIN ad_manage_user_role_map ur ON rf.RoleId = ur.RoleId AND r.RoleId
+		= ur.RoleId
+		AND ur.MuserId = #{userId}
+		AND f.StatusCode = 0
+		AND f.DeleteFlag = 0
+		ORDER BY
+		f.SortIndex
+	</select>
+</mapper>

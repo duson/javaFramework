@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.admaker.program.dao.AdGroupDayPlayMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.admaker.program.entity.AdGroupDayPlay">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="GroupId" jdbcType="BIGINT" property="groupId" />
+    <id column="PlayType" jdbcType="VARCHAR" property="playType" />
+    <id column="Area" jdbcType="VARCHAR" property="area" />
+    <id column="Days" jdbcType="DATE" property="days" />
+    <result column="ListId" jdbcType="BIGINT" property="listId" />
+    <result column="PlayId" jdbcType="BIGINT" property="playId" />
+    <result column="CompanyId" jdbcType="BIGINT" property="companyId" />
+    <result column="RegionId" jdbcType="BIGINT" property="regionId" />
+    <result column="CmdId" jdbcType="BIGINT" property="cmdId" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+  </resultMap>
+  <select id="getDayPlayOfToDayByListIds" resultType="com.facewnd.ad.modules.admaker.program.model.AdGroupDayPlayBO">
+		SELECT a.groupId
+		      ,a.playType
+		      ,a.area
+		      ,a.days
+		      ,a.listId
+		      ,a.playId
+		      ,a.companyId
+		      ,a.regionId
+		      ,a.cmdId
+		  FROM ad_group_day_play a
+		 WHERE a.days=DATE_FORMAT(NOW(),'%Y-%m-%d')<!-- 今天的 -->
+		   AND a.listId IN
+	       <foreach item="item" index="index" collection="listIds" open="(" separator="," close=")">
+		   	   #{item}
+		   </foreach>
+	</select>
+  	<insert id="inserts" parameterType="com.facewnd.ad.modules.admaker.program.entity.AdGroupDayPlay">
+		INSERT INTO ad_group_day_play(
+			   groupId,playType,area
+			  ,days,listId,playId
+			  ,companyId,regionId,cmdId
+			  ,createdUserId,createdDtm
+		) VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+			   #{item.groupId},#{item.playType},#{item.area}
+			  ,#{item.days},#{item.listId},#{item.playId}
+			  ,#{item.companyId},#{item.regionId},#{item.cmdId}
+			  ,#{item.createdUserId},#{item.createdDtm}
+			)
+		</foreach>
+		ON DUPLICATE KEY UPDATE 
+		   listId=VALUES(listId),playId=VALUES(playId),companyId=VALUES(companyId)
+		   ,regionId=VALUES(regionId),cmdId=VALUES(cmdId)
+		  ,createdUserId=VALUES(createdUserId),createdDtm=VALUES(createdDtm)
+	</insert>
+</mapper>

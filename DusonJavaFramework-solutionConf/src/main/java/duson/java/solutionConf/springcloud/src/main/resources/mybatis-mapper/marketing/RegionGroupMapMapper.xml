@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.marketing.dao.RegionGroupMapMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.marketing.entity.RegionGroupMap">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="RegionId" jdbcType="BIGINT" property="regionId" />
+    <id column="GroupId" jdbcType="BIGINT" property="groupId" />
+    <id column="Area" jdbcType="VARCHAR" property="area" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+  </resultMap>
+  
+  <select id="deleteCheck" resultType="java.lang.Integer">
+  	SELECT SUM(cnt) FROM (
+		SELECT COUNT(1) cnt FROM ad_region WHERE ParentId=#{regionId}
+		UNION ALL
+		SELECT COUNT(1) cnt FROM ad_region_group_map WHERE RegionId=#{regionId}
+		UNION ALL
+		SELECT COUNT(1) cnt FROM ad_region region INNER JOIN ad_region_group_map map ON region.RegionId=map.RegionId WHERE ParentId=#{regionId}
+	) tmp
+  </select>
+  
+  <select id="selectGroupByRegion" resultType="com.facewnd.ad.modules.marketing.model.DeviceGroupPageFromRegionDTO">
+  	SELECT grp.groupId, grp.groupName, map.`area`, grp.direction, grp.isDefault, grp.deviceNumb, grp.templateName
+	FROM ad_region region 
+		INNER JOIN ad_region_group_map map ON region.RegionId=map.RegionId 
+		INNER JOIN ad_group grp ON map.GroupId=grp.GroupId
+	WHERE region.RegionId=#{regionId} 
+	<if test="groupName != groupName and groupName.length>0">
+		AND grp.GroupName LIKE #{groupName}
+	</if>
+		AND region.DeleteFlag=0 AND grp.DeleteFlag=0
+  </select>
+</mapper>

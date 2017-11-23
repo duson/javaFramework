@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.base.account.dao.AdUserMapper">
+	<resultMap id="BaseResultMap"
+		type="com.facewnd.ad.modules.base.account.entity.AdUser">
+		<!-- WARNING - @mbg.generated -->
+		<id column="UserId" jdbcType="BIGINT" property="userId" />
+		<result column="UserMobile" jdbcType="VARCHAR" property="userMobile" />
+		<!-- <result column="Password1" jdbcType="VARCHAR" property="password1" 
+			/> <result column="Password2" jdbcType="VARCHAR" property="password2" /> -->
+		<result column="NickName" jdbcType="VARCHAR" property="nickName" />
+		<result column="RealName" jdbcType="VARCHAR" property="realName" />
+		<result column="LoginNumb" jdbcType="INTEGER" property="loginNumb" />
+		<result column="LoginDtm" jdbcType="TIMESTAMP" property="loginDtm" />
+		<result column="ErrorLoginNumb" jdbcType="INTEGER" property="errorLoginNumb" />
+		<result column="ErrorLoginDtm" jdbcType="TIMESTAMP" property="errorLoginDtm" />
+		<result column="StatusCode" jdbcType="SMALLINT" property="statusCode" />
+		<result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+		<result column="Comments" jdbcType="VARCHAR" property="comments" />
+		<result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+		<result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+		<result column="LastUserId" jdbcType="BIGINT" property="lastUserId" />
+		<result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+		<result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+		<result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+		<result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+		<result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+	</resultMap>
+
+	<select id="queryCompanyUserList" resultMap="BaseResultMap">
+		SELECT
+		u.*
+		FROM
+		ad_user_company_map uc
+		INNER JOIN ad_user u ON uc.UserId =
+		u.UserId AND u.DeleteFlag=0
+		<where>
+			uc.CompanyId = #{companyId}
+			<if test="userMobile != null and userMobile.toString() != ''">
+				AND u.userMobile LIKE CONCAT('%',#{userMobile},'%')
+			</if>
+			<if test="nickName != null and nickName.toString() != ''">
+				AND u.nickName LIKE CONCAT('%',#{nickName},'%')
+			</if>
+			<if test="realName != null and realName.toString() != ''">
+				AND u.realName LIKE CONCAT('%',#{realName},'%')
+			</if>
+		</where>
+		ORDER BY u.CreatedDtm DESC
+	</select>
+</mapper>

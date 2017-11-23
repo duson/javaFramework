@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.admaker.program.dao.AdProgramListItemMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.admaker.program.entity.AdProgramListItem">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ItemId" jdbcType="BIGINT" property="itemId" />
+    <result column="ListId" jdbcType="BIGINT" property="listId" />
+    <result column="ProgramId" jdbcType="BIGINT" property="programId" />
+    <result column="SortIndex" jdbcType="INTEGER" property="sortIndex" />
+    <result column="ItemX" jdbcType="SMALLINT" property="itemX" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedUserId" jdbcType="BIGINT" property="createdUserId" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+  </resultMap>
+	<delete id="deleteItemByListId">
+		DELETE a
+		  FROM ad_program_list_item a
+		 WHERE a.listId IN
+	       <foreach item="item" index="index" collection="listIds" open="(" separator="," close=")">
+		   	   #{item}
+		   </foreach>
+	</delete>
+	<insert id="inserts" parameterType="com.facewnd.ad.modules.admaker.program.entity.AdProgramListItem">
+		INSERT INTO ad_program_list_item(
+			   itemId,listId,programId,sortIndex,itemX 
+			  ,createdUserId,createdDtm
+		) VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+			   #{item.itemId},#{item.listId},#{item.programId}
+              ,#{item.sortIndex},#{item.itemX}
+			  ,#{item.createdUserId},#{item.createdDtm}
+			)
+		</foreach>
+	</insert>
+</mapper>

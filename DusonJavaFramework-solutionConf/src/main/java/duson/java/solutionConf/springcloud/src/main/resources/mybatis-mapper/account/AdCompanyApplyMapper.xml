@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.facewnd.ad.modules.base.account.dao.AdCompanyApplyMapper">
+  <resultMap id="BaseResultMap" type="com.facewnd.ad.modules.base.account.entity.AdCompanyApply">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ApplyId" jdbcType="BIGINT" property="applyId" />
+    <result column="CompanyId" jdbcType="BIGINT" property="companyId" />
+    <result column="ApplyUserId" jdbcType="BIGINT" property="applyUserId" />
+    <result column="ApplyDtm" jdbcType="TIMESTAMP" property="applyDtm" />
+    <result column="ApplyNote" jdbcType="VARCHAR" property="applyNote" />
+    <result column="AuditorMuserId" jdbcType="BIGINT" property="auditorMuserId" />
+    <result column="AuditorDtm" jdbcType="TIMESTAMP" property="auditorDtm" />
+    <result column="AuditorNote" jdbcType="VARCHAR" property="auditorNote" />
+    <result column="LicenseNumb" jdbcType="INTEGER" property="licenseNumb" />
+    <result column="LicenseDays" jdbcType="INTEGER" property="licenseDays" />
+    <result column="StatusCode" jdbcType="SMALLINT" property="statusCode" />
+    <result column="DeleteFlag" jdbcType="SMALLINT" property="deleteFlag" />
+    <result column="Comments" jdbcType="VARCHAR" property="comments" />
+    <result column="CreatedDtm" jdbcType="TIMESTAMP" property="createdDtm" />
+    <result column="LastDtm" jdbcType="TIMESTAMP" property="lastDtm" />
+    <result column="IntVal1" jdbcType="BIGINT" property="intVal1" />
+    <result column="IntVal2" jdbcType="BIGINT" property="intVal2" />
+    <result column="StrVal1" jdbcType="VARCHAR" property="strVal1" />
+    <result column="StrVal2" jdbcType="VARCHAR" property="strVal2" />
+  </resultMap>
+  
+  	<sql id="AdApplyCompanyBase">
+		a.applyid AS "applyId",
+		a.companyid AS "companyId",
+		a.applyuserid AS "applyUserId",
+		a.applydtm AS "applyDtm",
+		a.applynote AS "applyNote",
+		a.licensenumb AS "licenseNumb",
+		a.licensedays AS "licenseDays",
+		a.auditorMuserId AS "auditorMuserId",
+		a.auditordtm AS "auditorDtm",
+		a.auditornote AS "auditorNote",
+		a.statuscode AS "statusCode",
+		IFNULL(a.comments,"") AS "comments",
+		a.lastdtm AS "lastDtm",
+		a.strval1 AS "materialAuditFlag",
+		a.intVal1 AS "intVal1"
+	</sql>
+	
+  	<select id="findAdCompanyApplyList" resultType="com.facewnd.ad.modules.base.account.model.AdCompanyApplyDTO">
+		SELECT
+		<include refid="AdApplyCompanyBase" />
+		, ss.companyName as companyName ,au.userMobile as userName,ss.isAuditor as isAuditor 
+		, ss.contact as contact,ss.companyAddress as companyAddress,concat_ws("-",ss.province,ss.city,ss.district) as areaStr
+		, au.nickName as nickName,au.realName as realName
+		FROM
+		ad_company_apply a left join ad_company ss on a.companyId =
+		ss.companyId
+		left join ad_user au on a.applyUserId = au.userId
+		<where>
+			1=1
+			<if test="companyName != null">
+				and ss.companyName like CONCAT('%',#{companyName},'%')
+			</if>
+			<if test="applyUserName != null">
+				and au.userMobile like CONCAT('%',#{applyUserName},'%')
+			</if>
+			<if test="statusCode != -1">
+				and a.statusCode = #{statusCode}
+			</if>
+			   
+			<!-- 申请时间 -->
+			<if test="applyDtmEnd != null and applyDtmEnd.toString() != ''">
+			    and a.applyDtm &lt;= #{applyDtmEnd}
+			</if>
+			<if test="applyDtmStart != null and applyDtmStart.toString() != ''">
+			   	and a.applyDtm >= #{applyDtmStart}
+			</if> 			   
+			   
+			ORDER BY a.CreatedDtm DESC
+		</where>
+	</select>
+  
+</mapper>

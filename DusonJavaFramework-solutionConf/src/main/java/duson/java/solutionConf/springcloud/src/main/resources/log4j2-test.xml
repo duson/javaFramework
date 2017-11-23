@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug" strict="true" name="XMLConfigTest" packages="org.apache.logging.log4j.test">
+	<Filter type="ThresholdFilter" level="debug" />
+
+	<Appenders>
+		<Appender type="Console" name="stdout">
+			<Layout type="PatternLayout" pattern="[%d{HH:mm:ss:SSS}] [%p] - %l - %m%n" />
+		</Appender>
+		<RollingFile name="debug" fileName="logs/debug.log" filePattern="logs/debug-%d{yyyy-MM-dd}-%i.log">
+			<ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+			<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY" />
+			<PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="100MB"/>
+			</Policies>
+		</RollingFile>
+		<RollingFile name="error" fileName="logs/error.log" filePattern="logs/error-%d{yyyy-MM-dd}-%i.log">
+			<ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY" />
+			<PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="100MB"/>
+			</Policies>
+		</RollingFile>
+		<RollingFile name="api" fileName="logs/api.log" filePattern="logs/api-%d{yyyy-MM-dd}-%i.log">
+			<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY" />
+			<PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="100MB"/>
+			</Policies>
+		</RollingFile>
+	</Appenders>
+
+	<Loggers>
+		<Logger name="com.facewnd.ad.api" level="debug" additivity="false">
+			<AppenderRef ref="api" />
+		</Logger>
+
+		<Root level="debug">
+			<AppenderRef ref="debug" />
+			<AppenderRef ref="error" />
+		</Root>
+	</Loggers>
+
+</Configuration>
